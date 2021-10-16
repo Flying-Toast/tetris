@@ -65,8 +65,22 @@ void tetris_init(struct tetris *t)
 {
 	t->bag_remaining = 0;
 	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
-	t->holding = false;
-	t->hold_lock = false;
+}
+
+void tetris_spawn_piece(struct tetris *t)
+{
+	t->curr_piece = tetris_bag_next(t);
+	t->curr_piece_loc = struct coord { 4, VISIBLE_PLAYFIELD_HEIGHT + 1 };
+}
+
+void tetris_start(struct tetris *t)
+{
+	tetris_spawn_piece(t);
+}
+
+void tetris_tick(struct tetris *t)
+{
+
 }
 
 struct piece tetris_bag_next(struct tetris *t)
