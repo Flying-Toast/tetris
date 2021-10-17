@@ -7,55 +7,55 @@ static const struct piece all_pieces[NUM_PIECE_KINDS] = {
 	// I
 	{
 		.squares = {
-			{SQUARE_EMPTY, SQUARE_EMPTY, SQUARE_EMPTY, SQUARE_EMPTY},
-			{SQUARE_CYAN,  SQUARE_CYAN,  SQUARE_CYAN,  SQUARE_CYAN}
+			{{SQUARE_EMPTY, {0, 0}}, {SQUARE_EMPTY, {1, 0}}, {SQUARE_EMPTY, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_CYAN,  {0, 1}}, {SQUARE_CYAN,  {1, 1}}, {SQUARE_CYAN,  {2, 1}}, {SQUARE_CYAN,  {3, 1}}}
 		}
 	},
 	// J
 	{
 		.squares = {
-			{SQUARE_BLUE, SQUARE_EMPTY, SQUARE_EMPTY, SQUARE_EMPTY},
-			{SQUARE_BLUE, SQUARE_BLUE,  SQUARE_BLUE,  SQUARE_EMPTY}
+			{{SQUARE_BLUE, {0, 0}}, {SQUARE_EMPTY, {1, 0}}, {SQUARE_EMPTY, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_BLUE, {0, 1}}, {SQUARE_BLUE,  {1, 1}}, {SQUARE_BLUE,  {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	},
 
 	// L
 	{
 		.squares = {
-			{SQUARE_EMPTY,  SQUARE_EMPTY,  SQUARE_ORANGE, SQUARE_EMPTY},
-			{SQUARE_ORANGE, SQUARE_ORANGE, SQUARE_ORANGE, SQUARE_EMPTY}
+			{{SQUARE_EMPTY,  {0, 0}}, {SQUARE_EMPTY,  {1, 0}}, {SQUARE_ORANGE, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_ORANGE, {0, 1}}, {SQUARE_ORANGE, {1, 1}}, {SQUARE_ORANGE, {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	},
 
 	// O
 	{
 		.squares = {
-			{SQUARE_EMPTY, SQUARE_YELLOW, SQUARE_YELLOW, SQUARE_EMPTY},
-			{SQUARE_EMPTY, SQUARE_YELLOW, SQUARE_YELLOW, SQUARE_EMPTY}
+			{{SQUARE_EMPTY, {0, 0}}, {SQUARE_YELLOW, {1, 0}}, {SQUARE_YELLOW, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_EMPTY, {0, 1}}, {SQUARE_YELLOW, {1, 1}}, {SQUARE_YELLOW, {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	},
 
 	// S
 	{
 		.squares = {
-			{SQUARE_EMPTY, SQUARE_GREEN, SQUARE_GREEN, SQUARE_EMPTY},
-			{SQUARE_GREEN, SQUARE_GREEN, SQUARE_EMPTY, SQUARE_EMPTY}
+			{{SQUARE_EMPTY, {0, 0}}, {SQUARE_GREEN, {1, 0}}, {SQUARE_GREEN, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_GREEN, {0, 1}}, {SQUARE_GREEN, {1, 1}}, {SQUARE_EMPTY, {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	},
 
 	// Z
 	{
 		.squares = {
-			{SQUARE_RED,   SQUARE_RED, SQUARE_EMPTY, SQUARE_EMPTY},
-			{SQUARE_EMPTY, SQUARE_RED, SQUARE_RED,   SQUARE_EMPTY}
+			{{SQUARE_RED,   {0, 0}}, {SQUARE_RED, {1, 0}}, {SQUARE_EMPTY, {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_EMPTY, {0, 1}}, {SQUARE_RED, {1, 1}}, {SQUARE_RED,   {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	},
 
 	// T
 	{
 		.squares = {
-			{SQUARE_EMPTY,  SQUARE_PURPLE, SQUARE_EMPTY,  SQUARE_EMPTY},
-			{SQUARE_PURPLE, SQUARE_PURPLE, SQUARE_PURPLE, SQUARE_EMPTY}
+			{{SQUARE_EMPTY,  {0, 0}}, {SQUARE_PURPLE, {1, 0}}, {SQUARE_EMPTY,  {2, 0}}, {SQUARE_EMPTY, {3, 0}}},
+			{{SQUARE_PURPLE, {0, 1}}, {SQUARE_PURPLE, {1, 1}}, {SQUARE_PURPLE, {2, 1}}, {SQUARE_EMPTY, {3, 1}}}
 		}
 	}
 };
@@ -70,7 +70,6 @@ void tetris_init(struct tetris *t)
 void tetris_spawn_piece(struct tetris *t)
 {
 	t->curr_piece = tetris_bag_next(t);
-	t->curr_piece_loc = (struct coord) { 4, VISIBLE_PLAYFIELD_HEIGHT + 1 };
 }
 
 void tetris_start(struct tetris *t)

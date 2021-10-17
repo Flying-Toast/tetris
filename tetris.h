@@ -19,13 +19,18 @@ enum square {
 	SQUARE_PURPLE
 };
 
-struct piece {
-	enum square squares[2][4];
-};
-
 struct coord {
 	int x;
 	int y;
+};
+
+struct floatingsquare {
+	enum square sq;
+	struct coord coords;
+};
+
+struct piece {
+	struct floatingsquare squares[2][4];
 };
 
 struct tetris {
@@ -35,8 +40,6 @@ struct tetris {
 	int bag_remaining;
 
 	struct piece curr_piece;
-	// coord of top left corner
-	struct coord curr_piece_loc;
 };
 
 struct piece tetris_bag_next(struct tetris *t);
