@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/random.h>
 #include <SDL2/SDL.h>
 
@@ -12,11 +13,17 @@ void seed_rng(void)
 	srand(seed);
 }
 
+void clean_exit(int err)
+{
+	SDL_DestroyWindow(win);
+	SDL_Quit();
+	exit(err);
+}
+
 void die_with_sdl_err(void)
 {
 	printf("SDL error: %s\nExiting...\n", SDL_GetError());
-	SDL_DestroyWindow(win);
-	SDL_Quit();
+	clean_exit(1);
 }
 
 int main(int argc, char **argv)
@@ -26,7 +33,7 @@ int main(int argc, char **argv)
 	if (SDL_Init(SDL_INIT_VIDEO))
 		die_with_sdl_err();
 
-	win = SDL_CreateWindow("Tetris", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 100, 100, SDL_WINDOW_SHOWN);
+	win = SDL_CreateWindow("Tetris", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 500, 700, SDL_WINDOW_SHOWN);
 	if (!win)
 		die_with_sdl_err();
 
@@ -34,5 +41,12 @@ int main(int argc, char **argv)
 
 	SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 0, 255, 0));
 	SDL_UpdateWindowSurface(win);
-	SDL_Delay(3000);
+
+	for (;;) {
+		SDL_Event e;
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT)
+				clean_exit(0);
+		}
+	}
 }

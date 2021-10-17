@@ -1,9 +1,10 @@
 CC=gcc
 OBJECTS=main.o tetris.o
-CFLAGS=-Wall -lSDL2 -lm
+CFLAGS=-Wall
+LIBS=-lSDL2 -lm
 
 tetris: $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o tetris
+	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o tetris
 
 .PHONY: run
 run: tetris
