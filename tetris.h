@@ -7,6 +7,9 @@
 #define PLAYFIELD_WIDTH 10
 #define PLAYFIELD_HEIGHT 25
 #define VISIBLE_PLAYFIELD_HEIGHT 20
+#define PIECE_MAX_WIDTH 4
+#define PIECE_MAX_HEIGHT 2
+#define PIECE_LEFT_START ((PLAYFIELD_WIDTH - PIECE_MAX_WIDTH) / 2)
 
 enum square {
 	SQUARE_EMPTY = 0,
@@ -30,7 +33,7 @@ struct floatingsquare {
 };
 
 struct piece {
-	struct floatingsquare squares[2][4];
+	struct floatingsquare squares[PIECE_MAX_HEIGHT][PIECE_MAX_WIDTH];
 };
 
 struct tetris {
