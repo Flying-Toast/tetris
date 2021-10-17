@@ -70,7 +70,7 @@ void tetris_init(struct tetris *t)
 void tetris_spawn_piece(struct tetris *t)
 {
 	t->curr_piece = tetris_bag_next(t);
-	t->curr_piece_loc = struct coord { 4, VISIBLE_PLAYFIELD_HEIGHT + 1 };
+	t->curr_piece_loc = (struct coord) { 4, VISIBLE_PLAYFIELD_HEIGHT + 1 };
 }
 
 void tetris_start(struct tetris *t)

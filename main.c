@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <sys/random.h>
-#include <stdlib.h>
 #include <SDL2/SDL.h>
 
 SDL_Window *win;
@@ -18,7 +17,6 @@ void die_with_sdl_err(void)
 	printf("SDL error: %s\nExiting...\n", SDL_GetError());
 	SDL_DestroyWindow(win);
 	SDL_Quit();
-	exit(1);
 }
 
 int main(int argc, char **argv)
