@@ -8,26 +8,18 @@
 #define WINDOW_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
 #define WINDOW_HEIGHT (SQUARE_SIZE * PLAYFIELD_VISIBLE_HEIGHT)
 
-SDL_Window *win;
-SDL_Renderer *rndr;
+static SDL_Window *win;
+static SDL_Renderer *rndr;
 
-const Uint8 squarecolors[][3] = {
-	// 0 - SQUARE_EMPTY
-	{0, 0, 0},
-	// 1 - SQUARE_CYAN
-	{2, 248, 252},
-	// 2 - SQUARE_BLUE
-	{34, 51, 232},
-	// 3 - SQUARE_ORANGE
-	{239, 160, 14},
-	// 4 - SQUARE_YELLOW
-	{247, 235, 12},
-	// 5 - SQUARE_GREEN
-	{43, 163, 32},
-	// 6 - SQUARE_RED
-	{226, 50, 34},
-	// 7 - SQUARE_PURPLE
-	{120, 11, 183}
+static const Uint8 squarecolors[][3] = {
+	[SQUARE_EMPTY] = {0, 0, 0},
+	[SQUARE_CYAN] = {2, 248, 252},
+	[SQUARE_BLUE] = {34, 51, 232},
+	[SQUARE_ORANGE] = {239, 160, 14},
+	[SQUARE_YELLOW] = {247, 235, 12},
+	[SQUARE_GREEN] = {43, 163, 32},
+	[SQUARE_RED] = {226, 50, 34},
+	[SQUARE_PURPLE] = {120, 11, 183}
 };
 
 void seed_rng(void)

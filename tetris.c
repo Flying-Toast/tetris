@@ -4,9 +4,19 @@
 #include <stdbool.h>
 #include "tetris.h"
 
+static const enum square shape_colors[NUM_SHAPES] = {
+	[SHAPE_I] = SQUARE_CYAN,
+	[SHAPE_J] = SQUARE_BLUE,
+	[SHAPE_L] = SQUARE_ORANGE,
+	[SHAPE_O] = SQUARE_YELLOW,
+	[SHAPE_S] = SQUARE_GREEN,
+	[SHAPE_T] = SQUARE_PURPLE,
+	[SHAPE_Z] = SQUARE_RED
+};
+
 enum square shape_color(enum shape s)
 {
-	return s + 1;
+	return shape_colors[s];
 }
 
 void tetromino_init(struct tetromino *tm, enum shape shape)
