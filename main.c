@@ -93,14 +93,19 @@ int main(int argc, char **argv)
 	struct tetris tet;
 	tetris_init(&tet);
 
+	Uint32 last_tick = SDL_GetTicks();
 	for (;;) {
+		Uint32 now_tick = SDL_GetTicks();
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT)
 				clean_exit(0);
 		}
 
-		tetris_tick(&tet);
+		if (now_tick - last_tick >= tet.tick_interval) {
+			tetris_tick(&tet);
+			last_tick = now_tick;
+		}
 		tetris_render(&tet);
 		SDL_RenderPresent(rndr);
 	}

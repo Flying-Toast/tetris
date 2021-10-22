@@ -7,6 +7,7 @@ void tetris_init(struct tetris *t)
 {
 	t->bag_remaining = 0;
 	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
+	t->tick_interval = DEFAULT_TICK_INTERVAL;
 }
 
 void tetris_tick(struct tetris *t)
