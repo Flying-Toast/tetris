@@ -72,17 +72,22 @@ void init(void)
 		die_with_sdl_err();
 }
 
-void tetris_render(struct tetris *const t)
+void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
+{
+	set_sdl_square_color(sq);
+	SDL_Rect rect;
+	rect.w = SQUARE_SIZE;
+	rect.h = SQUARE_SIZE;
+	rect.x = x * SQUARE_SIZE;
+	rect.y = y * SQUARE_SIZE;
+	SDL_RenderFillRect(renderer, &rect);
+}
+
+void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
 	for (int y = 0; y < PLAYFIELD_VISIBLE_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
-			set_sdl_square_color(t->playfield[y][x]);
-			SDL_Rect sq;
-			sq.w = SQUARE_SIZE;
-			sq.h = SQUARE_SIZE;
-			sq.x = x * SQUARE_SIZE;
-			sq.y = y * SQUARE_SIZE;
-			SDL_RenderFillRect(rndr, &sq);
+			render_square(t->playfield[y][x], x, y, renderer);
 		}
 	}
 }
@@ -106,7 +111,7 @@ int main(int argc, char **argv)
 			tetris_tick(&tet);
 			last_tick = now_tick;
 		}
-		tetris_render(&tet);
+		tetris_render(&tet, rndr);
 		SDL_RenderPresent(rndr);
 	}
 }
