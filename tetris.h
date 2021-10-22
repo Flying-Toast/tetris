@@ -10,6 +10,8 @@
 
 #define DEFAULT_TICK_INTERVAL (100)
 
+#define SHAPE_BOUNDING_BOX_SIZE (4)
+
 enum shape {
 	SHAPE_I = 0,
 	SHAPE_J,
@@ -28,13 +30,13 @@ enum square {
 	SQUARE_ORANGE,
 	SQUARE_YELLOW,
 	SQUARE_GREEN,
-	SQUARE_RED,
-	SQUARE_PURPLE
+	SQUARE_PURPLE,
+	SQUARE_RED
 };
 
 struct tetromino {
 	enum shape shape;
-	enum square squares[4][4];
+	enum square squares[SHAPE_BOUNDING_BOX_SIZE][SHAPE_BOUNDING_BOX_SIZE];
 };
 
 struct tetris {
