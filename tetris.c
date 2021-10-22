@@ -75,7 +75,7 @@ int tetromino_max_bounding_y(struct tetromino *const tm)
 
 void tetris_spawn_piece(struct tetris *t)
 {
-	t->current_tetromino = tetris_bag_next(t);
+	tetris_bag_next(t, &t->current_tetromino);
 	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
 	t->current_y = 0;
 }
@@ -126,7 +126,7 @@ void tetris_move_current_right(struct tetris *t)
 	t->current_x++;
 }
 
-struct tetromino tetris_bag_next(struct tetris *t)
+void tetris_bag_next(struct tetris *t, struct tetromino *ret)
 {
 	if (t->bag_remaining == 0) {
 		t->bag_remaining = NUM_SHAPES;
@@ -142,5 +142,5 @@ struct tetromino tetris_bag_next(struct tetris *t)
 		}
 	}
 
-	return t->bag[--(t->bag_remaining)];
+	*ret = t->bag[--(t->bag_remaining)];
 }
