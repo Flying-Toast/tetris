@@ -113,13 +113,18 @@ int main(int argc, char **argv)
 		Uint32 now_tick = SDL_GetTicks();
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT)
+			if (e.type == SDL_QUIT) {
 				clean_exit(0);
-			if (e.type == SDL_KEYDOWN) {
+			} else if (e.type == SDL_KEYDOWN) {
 				if (kstate[SDL_SCANCODE_LEFT])
 					tetris_move_current_left(&tet);
 				if (kstate[SDL_SCANCODE_RIGHT])
 					tetris_move_current_right(&tet);
+				if (kstate[SDL_SCANCODE_DOWN])
+					tet.tick_interval = SLAM_TICK_INTERVAL;
+			} else if (e.type == SDL_KEYUP) {
+				if (!kstate[SDL_SCANCODE_DOWN])
+					tet.tick_interval = DEFAULT_TICK_INTERVAL;
 			}
 		}
 

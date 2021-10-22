@@ -73,6 +73,13 @@ int tetromino_max_bounding_y(struct tetromino *const tm)
 	return 0;
 }
 
+void tetris_spawn_piece(struct tetris *t)
+{
+	t->current_tetromino = tetris_bag_next(t);
+	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
+	t->current_y = 0;
+}
+
 void tetris_init(struct tetris *t)
 {
 	t->bag_remaining = 0;
@@ -85,13 +92,6 @@ bool tetris_current_has_hit_bottom(struct tetris *const t)
 {
 	int max_y = PLAYFIELD_VISIBLE_HEIGHT - 1 - tetromino_max_bounding_y(&t->current_tetromino);
 	return t->current_y >= max_y;
-}
-
-void tetris_spawn_piece(struct tetris *t)
-{
-	t->current_tetromino = tetris_bag_next(t);
-	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
-	t->current_y = 0;
 }
 
 void tetris_blit_current(struct tetris *t)
