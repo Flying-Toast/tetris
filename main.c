@@ -22,14 +22,14 @@ static const Uint8 squarecolors[][3] = {
 	[SQUARE_PURPLE] = {120, 11, 183}
 };
 
-void seed_rng(void)
+static void seed_rng(void)
 {
 	unsigned int seed;
 	getrandom(&seed, sizeof(seed), 0);
 	srand(seed);
 }
 
-void clean_exit(int err)
+static void clean_exit(int err)
 {
 	SDL_DestroyRenderer(rndr);
 	SDL_DestroyWindow(win);
@@ -37,18 +37,18 @@ void clean_exit(int err)
 	exit(err);
 }
 
-void die_with_sdl_err(void)
+static void die_with_sdl_err(void)
 {
 	printf("SDL error: %s\nExiting...\n", SDL_GetError());
 	clean_exit(1);
 }
 
-void set_sdl_square_color(enum square sq, SDL_Renderer *renderer)
+static void set_sdl_square_color(enum square sq, SDL_Renderer *renderer)
 {
 	SDL_SetRenderDrawColor(renderer, squarecolors[sq][0], squarecolors[sq][1], squarecolors[sq][2], 255);
 }
 
-void init(void)
+static void init(void)
 {
 	seed_rng();
 
@@ -64,7 +64,7 @@ void init(void)
 		die_with_sdl_err();
 }
 
-void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
+static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 {
 	set_sdl_square_color(sq, renderer);
 	SDL_Rect rect;
@@ -75,7 +75,7 @@ void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
 	for (int y = 0; y < PLAYFIELD_VISIBLE_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {

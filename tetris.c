@@ -14,12 +14,12 @@ static const enum square shape_colors[NUM_SHAPES] = {
 	[SHAPE_Z] = SQUARE_RED
 };
 
-enum square shape_color(enum shape s)
+static enum square shape_color(enum shape s)
 {
 	return shape_colors[s];
 }
 
-void tetromino_init(struct tetromino *tm, enum shape shape)
+static void tetromino_init(struct tetromino *tm, enum shape shape)
 {
 	tm->shape = shape;
 	memset(tm->squares, SQUARE_EMPTY, sizeof(enum square) * SHAPE_BOUNDING_BOX_SIZE * SHAPE_BOUNDING_BOX_SIZE);
@@ -72,7 +72,26 @@ void tetromino_init(struct tetromino *tm, enum shape shape)
 	}
 }
 
-void tetris_spawn_piece(struct tetris *t)
+static void tetris_bag_next(struct tetris *t, struct tetromino *ret)
+{
+	if (t->bag_remaining == 0) {
+		t->bag_remaining = NUM_SHAPES;
+		for (enum shape i = 0; i < NUM_SHAPES; i++) {
+			tetromino_init(&t->bag[i], i);
+		}
+		for (int i = NUM_SHAPES - 1; i > 0; i--) {
+			double frac = ((double) rand()) / ((double) RAND_MAX);
+			int j = round(frac * ((double) i));
+			struct tetromino tmp = t->bag[j];
+			t->bag[j] = t->bag[i];
+			t->bag[i] = tmp;
+		}
+	}
+
+	*ret = t->bag[--(t->bag_remaining)];
+}
+
+static void tetris_spawn_piece(struct tetris *t)
 {
 	tetris_bag_next(t, &t->current_tetromino);
 	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
@@ -87,7 +106,7 @@ void tetris_init(struct tetris *t)
 	tetris_spawn_piece(t);
 }
 
-void tetris_blit_current(struct tetris *t)
+static void tetris_blit_current(struct tetris *t)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -99,7 +118,7 @@ void tetris_blit_current(struct tetris *t)
 	}
 }
 
-bool tetris_invalid_current_pos(struct tetris *const t)
+static bool tetris_invalid_current_pos(struct tetris *const t)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -145,23 +164,4 @@ void tetris_move_current_right(struct tetris *t)
 	t->current_x++;
 	if (tetris_invalid_current_pos(t))
 		t->current_x--;
-}
-
-void tetris_bag_next(struct tetris *t, struct tetromino *ret)
-{
-	if (t->bag_remaining == 0) {
-		t->bag_remaining = NUM_SHAPES;
-		for (enum shape i = 0; i < NUM_SHAPES; i++) {
-			tetromino_init(&t->bag[i], i);
-		}
-		for (int i = NUM_SHAPES - 1; i > 0; i--) {
-			double frac = ((double) rand()) / ((double) RAND_MAX);
-			int j = round(frac * ((double) i));
-			struct tetromino tmp = t->bag[j];
-			t->bag[j] = t->bag[i];
-			t->bag[i] = tmp;
-		}
-	}
-
-	*ret = t->bag[--(t->bag_remaining)];
 }

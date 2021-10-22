@@ -53,8 +53,6 @@ struct tetris {
 	int current_x;
 };
 
-void tetris_bag_next(struct tetris *t, struct tetromino *ret);
-
 void tetris_init(struct tetris *t);
 
 void tetris_tick(struct tetris *t);
