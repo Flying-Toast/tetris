@@ -99,18 +99,25 @@ void tetris_blit_current(struct tetris *t)
 	}
 }
 
-bool tetris_current_is_settled(struct tetris *const t)
+bool tetris_invalid_current_pos(struct tetris *const t)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			int cx = t->current_x + x;
 			int cy = t->current_y + y;
 			enum square curr = t->current_tetromino.squares[y][x];
-			if (curr != SQUARE_EMPTY) {
-				if (cy == PLAYFIELD_VISIBLE_HEIGHT - 1 || t->playfield[cy + 1][cx] != SQUARE_EMPTY) {
-					return true;
-				}
-			}
+
+			if (curr == SQUARE_EMPTY)
+				continue;
+
+			if (cy < 0 || cy > PLAYFIELD_VISIBLE_HEIGHT - 1)
+				return true;
+
+			if (cx < 0 || cx > PLAYFIELD_WIDTH - 1)
+				return true;
+
+			if (t->playfield[cy][cx] != SQUARE_EMPTY)
+				return true;
 		}
 	}
 	return false;
@@ -118,50 +125,26 @@ bool tetris_current_is_settled(struct tetris *const t)
 
 void tetris_tick(struct tetris *t)
 {
-	if (!tetris_current_is_settled(t)) {
-		t->current_y++;
-	} else {
+	t->current_y++;
+	if (tetris_invalid_current_pos(t)) {
+		t->current_y--;
 		tetris_blit_current(t);
 		tetris_spawn_piece(t);
 	}
 }
 
-int tetris_current_left_bbox_padding(struct tetris *t)
-{
-	for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
-			if (t->current_tetromino.squares[y][x] != SQUARE_EMPTY) {
-				return x;
-			}
-		}
-	}
-	return SHAPE_BOUNDING_BOX_SIZE;
-}
-
-int tetris_current_right_bbox_padding(struct tetris *t)
-{
-	int xpad = 0;
-	for (int x = SHAPE_BOUNDING_BOX_SIZE - 1; x >= 0; x--) {
-		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
-			if (t->current_tetromino.squares[y][x] != SQUARE_EMPTY) {
-				return xpad;
-			}
-		}
-		xpad++;
-	}
-	return xpad;
-}
-
 void tetris_move_current_left(struct tetris *t)
 {
-	if (t->current_x + tetris_current_left_bbox_padding(t) != 0)
-		t->current_x--;
+	t->current_x--;
+	if (tetris_invalid_current_pos(t))
+		t->current_x++;
 }
 
 void tetris_move_current_right(struct tetris *t)
 {
-	if (t->current_x + (SHAPE_BOUNDING_BOX_SIZE - tetris_current_right_bbox_padding(t)) < PLAYFIELD_WIDTH)
-		t->current_x++;
+	t->current_x++;
+	if (tetris_invalid_current_pos(t))
+		t->current_x--;
 }
 
 void tetris_bag_next(struct tetris *t, struct tetromino *ret)
