@@ -27,20 +27,46 @@ void tetromino_init(struct tetromino *tm, enum shape shape)
 	enum square color = shape_color(shape);
 	switch (shape) {
 	case SHAPE_I:
-		for (int i = 0; i <= 4; i++)
-			tm->squares[1][i] = color;
+		tm->squares[1][0] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
+		tm->squares[1][3] = color;
 		break;
 	case SHAPE_J:
+		tm->squares[0][0] = color;
+		tm->squares[1][0] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
 		break;
 	case SHAPE_L:
+		tm->squares[0][2] = color;
+		tm->squares[1][0] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
 		break;
 	case SHAPE_O:
+		tm->squares[0][1] = color;
+		tm->squares[0][2] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
 		break;
 	case SHAPE_S:
+		tm->squares[0][1] = color;
+		tm->squares[0][2] = color;
+		tm->squares[1][0] = color;
+		tm->squares[1][1] = color;
 		break;
 	case SHAPE_T:
+		tm->squares[0][1] = color;
+		tm->squares[1][0] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
 		break;
 	case SHAPE_Z:
+		tm->squares[0][0] = color;
+		tm->squares[0][1] = color;
+		tm->squares[1][1] = color;
+		tm->squares[1][2] = color;
 		break;
 	default:
 		break;
