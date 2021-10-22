@@ -72,17 +72,6 @@ void tetromino_init(struct tetromino *tm, enum shape shape)
 	}
 }
 
-int tetromino_max_bounding_y(struct tetromino *const tm)
-{
-	for (int y = SHAPE_BOUNDING_BOX_SIZE - 1; y >= 0; y--) {
-		for (int i = 0; i < SHAPE_BOUNDING_BOX_SIZE; i++) {
-			if (tm->squares[y][i] != SQUARE_EMPTY)
-				return y;
-		}
-	}
-	return 0;
-}
-
 void tetris_spawn_piece(struct tetris *t)
 {
 	tetris_bag_next(t, &t->current_tetromino);
@@ -98,12 +87,6 @@ void tetris_init(struct tetris *t)
 	tetris_spawn_piece(t);
 }
 
-bool tetris_current_has_hit_bottom(struct tetris *const t)
-{
-	int max_y = PLAYFIELD_VISIBLE_HEIGHT - 1 - tetromino_max_bounding_y(&t->current_tetromino);
-	return t->current_y >= max_y;
-}
-
 void tetris_blit_current(struct tetris *t)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
@@ -116,9 +99,26 @@ void tetris_blit_current(struct tetris *t)
 	}
 }
 
+bool tetris_current_is_settled(struct tetris *const t)
+{
+	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			int cx = t->current_x + x;
+			int cy = t->current_y + y;
+			enum square curr = t->current_tetromino.squares[y][x];
+			if (curr != SQUARE_EMPTY) {
+				if (cy == PLAYFIELD_VISIBLE_HEIGHT - 1 || t->playfield[cy + 1][cx] != SQUARE_EMPTY) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void tetris_tick(struct tetris *t)
 {
-	if (!tetris_current_has_hit_bottom(t)) {
+	if (!tetris_current_is_settled(t)) {
 		t->current_y++;
 	} else {
 		tetris_blit_current(t);
