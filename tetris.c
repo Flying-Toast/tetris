@@ -15,8 +15,7 @@ void tetris_tick(struct tetris *t)
 
 }
 
-/*
-struct piece tetris_bag_next(struct tetris *t)
+struct tetromino tetris_bag_next(struct tetris *t)
 {
 	if (t->bag_remaining == 0) {
 		t->bag_remaining = NUM_PIECE_KINDS;
@@ -24,7 +23,7 @@ struct piece tetris_bag_next(struct tetris *t)
 		for (int i = NUM_PIECE_KINDS - 1; i > 0; i--) {
 			double frac = ((double) rand()) / ((double) RAND_MAX);
 			int j = round(frac * ((double) i));
-			struct piece tmp = t->bag[j];
+			struct tetromino tmp = t->bag[j];
 			t->bag[j] = t->bag[i];
 			t->bag[i] = tmp;
 		}
@@ -32,4 +31,3 @@ struct piece tetris_bag_next(struct tetris *t)
 
 	return t->bag[--(t->bag_remaining)];
 }
-*/

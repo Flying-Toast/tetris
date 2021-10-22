@@ -10,6 +10,17 @@
 
 #define DEFAULT_TICK_INTERVAL (100)
 
+enum shape {
+	SHAPE_I,
+	SHAPE_J,
+	SHAPE_L,
+	SHAPE_O,
+	SHAPE_S,
+	SHAPE_T,
+	SHAPE_Z,
+	NUM_SHAPES
+};
+
 enum square {
 	SQUARE_EMPTY = 0,
 	SQUARE_CYAN,
@@ -21,16 +32,21 @@ enum square {
 	SQUARE_PURPLE
 };
 
+struct tetromino {
+	enum shape shape;
+	enum square squares[4][4];
+};
+
 struct tetris {
 	enum square playfield[PLAYFIELD_HEIGHT][PLAYFIELD_WIDTH];
 
-	//struct piece bag[NUM_PIECE_KINDS];
+	struct tetromino bag[NUM_PIECE_KINDS];
 	int bag_remaining;
 
 	uint32_t tick_interval;
 };
 
-struct piece tetris_bag_next(struct tetris *t);
+struct tetromino tetris_bag_next(struct tetris *t);
 
 void tetris_init(struct tetris *t);
 
