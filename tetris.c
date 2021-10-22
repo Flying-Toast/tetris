@@ -116,9 +116,27 @@ void tetris_tick(struct tetris *t)
 	}
 }
 
+int tetris_current_left_bbox_padding(struct tetris *t)
+{
+	for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+			if (t->current_tetromino.squares[y][x] != SQUARE_EMPTY) {
+				return x;
+			}
+		}
+	}
+	return SHAPE_BOUNDING_BOX_SIZE;
+}
+
+int tetris_current_right_bbox_padding(struct tetris *t)
+{
+	return 0;
+}
+
 void tetris_move_current_left(struct tetris *t)
 {
-	t->current_x--;
+	if (t->current_x + tetris_current_left_bbox_padding(t) != 0)
+		t->current_x--;
 }
 
 void tetris_move_current_right(struct tetris *t)
