@@ -8,22 +8,10 @@ enum square shape_color(enum shape s)
 	return s + 1;
 }
 
-void tetris_init(struct tetris *t)
-{
-	t->bag_remaining = 0;
-	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
-	t->tick_interval = DEFAULT_TICK_INTERVAL;
-}
-
-void tetris_tick(struct tetris *t)
-{
-
-}
-
 void tetromino_init(struct tetromino *tm, enum shape shape)
 {
 	tm->shape = shape;
-	memset(tm->squares, SQUARE_EMPTY, SHAPE_BOUNDING_BOX_SIZE * SHAPE_BOUNDING_BOX_SIZE);
+	memset(tm->squares, SQUARE_EMPTY, sizeof(enum square) * SHAPE_BOUNDING_BOX_SIZE * SHAPE_BOUNDING_BOX_SIZE);
 	enum square color = shape_color(shape);
 	switch (shape) {
 	case SHAPE_I:
@@ -71,6 +59,20 @@ void tetromino_init(struct tetromino *tm, enum shape shape)
 	default:
 		break;
 	}
+}
+
+void tetris_init(struct tetris *t)
+{
+	t->bag_remaining = 0;
+	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
+	t->tick_interval = DEFAULT_TICK_INTERVAL;
+	t->current_tetromino = tetris_bag_next(t);
+	t->current_y = 0;
+}
+
+void tetris_tick(struct tetris *t)
+{
+	t->current_y += 1;
 }
 
 struct tetromino tetris_bag_next(struct tetris *t)

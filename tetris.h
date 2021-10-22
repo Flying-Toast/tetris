@@ -46,6 +46,9 @@ struct tetris {
 	int bag_remaining;
 
 	uint32_t tick_interval;
+
+	struct tetromino current_tetromino;
+	int current_y;
 };
 
 struct tetromino tetris_bag_next(struct tetris *t);

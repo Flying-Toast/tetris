@@ -51,9 +51,9 @@ void die_with_sdl_err(void)
 	clean_exit(1);
 }
 
-void set_sdl_square_color(enum square sq)
+void set_sdl_square_color(enum square sq, SDL_Renderer *renderer)
 {
-	SDL_SetRenderDrawColor(rndr, squarecolors[sq][0], squarecolors[sq][1], squarecolors[sq][2], 255);
+	SDL_SetRenderDrawColor(renderer, squarecolors[sq][0], squarecolors[sq][1], squarecolors[sq][2], 255);
 }
 
 void init(void)
@@ -74,7 +74,7 @@ void init(void)
 
 void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 {
-	set_sdl_square_color(sq);
+	set_sdl_square_color(sq, renderer);
 	SDL_Rect rect;
 	rect.w = SQUARE_SIZE;
 	rect.h = SQUARE_SIZE;
@@ -88,6 +88,12 @@ void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 	for (int y = 0; y < PLAYFIELD_VISIBLE_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
 			render_square(t->playfield[y][x], x, y, renderer);
+		}
+	}
+
+	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			render_square(t->current_tetromino.squares[y][x], x, y + t->current_y, renderer);
 		}
 	}
 }
