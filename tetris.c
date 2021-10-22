@@ -94,11 +94,24 @@ void tetris_spawn_piece(struct tetris *t)
 	t->current_y = 0;
 }
 
+void tetris_blit_current(struct tetris *t)
+{
+	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			enum square curr = t->current_tetromino.squares[y][x];
+			if (curr != SQUARE_EMPTY) {
+				t->playfield[y + t->current_y][x + t->current_x] = curr;
+			}
+		}
+	}
+}
+
 void tetris_tick(struct tetris *t)
 {
 	if (!tetris_current_has_hit_bottom(t)) {
 		t->current_y++;
 	} else {
+		tetris_blit_current(t);
 		tetris_spawn_piece(t);
 	}
 }

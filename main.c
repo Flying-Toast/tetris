@@ -93,7 +93,10 @@ void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-			render_square(t->current_tetromino.squares[y][x], x + t->current_x, y + t->current_y, renderer);
+			enum square curr = t->current_tetromino.squares[y][x];
+			if (curr != SQUARE_EMPTY) {
+				render_square(curr, x + t->current_x, y + t->current_y, renderer);
+			}
 		}
 	}
 }
@@ -105,7 +108,7 @@ int main(int argc, char **argv)
 	tetris_init(&tet);
 
 	Uint32 last_tick = SDL_GetTicks();
-	Uint8 *kstate = SDL_GetKeyboardState(NULL);
+	const Uint8 *kstate = SDL_GetKeyboardState(NULL);
 	for (;;) {
 		Uint32 now_tick = SDL_GetTicks();
 		SDL_Event e;
