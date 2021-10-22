@@ -49,6 +49,7 @@ struct tetris {
 
 	struct tetromino current_tetromino;
 	int current_y;
+	int current_x;
 };
 
 struct tetromino tetris_bag_next(struct tetris *t);
@@ -56,5 +57,8 @@ struct tetromino tetris_bag_next(struct tetris *t);
 void tetris_init(struct tetris *t);
 
 void tetris_tick(struct tetris *t);
+
+void tetris_move_current_left(struct tetris *t);
+void tetris_move_current_right(struct tetris *t);
 
 #endif
