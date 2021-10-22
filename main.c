@@ -116,11 +116,11 @@ int main(int argc, char **argv)
 			if (e.type == SDL_QUIT) {
 				clean_exit(0);
 			} else if (e.type == SDL_KEYDOWN) {
-				if (kstate[SDL_SCANCODE_LEFT])
+				if (e.key.keysym.scancode == SDL_SCANCODE_LEFT)
 					tetris_move_current_left(&tet);
-				if (kstate[SDL_SCANCODE_RIGHT])
+				if (e.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 					tetris_move_current_right(&tet);
-				if (kstate[SDL_SCANCODE_DOWN])
+				if (e.key.keysym.scancode == SDL_SCANCODE_DOWN)
 					tet.tick_interval = SLAM_TICK_INTERVAL;
 			} else if (e.type == SDL_KEYUP) {
 				if (!kstate[SDL_SCANCODE_DOWN])
