@@ -130,7 +130,16 @@ int tetris_current_left_bbox_padding(struct tetris *t)
 
 int tetris_current_right_bbox_padding(struct tetris *t)
 {
-	return 0;
+	int xpad = 0;
+	for (int x = SHAPE_BOUNDING_BOX_SIZE - 1; x >= 0; x--) {
+		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+			if (t->current_tetromino.squares[y][x] != SQUARE_EMPTY) {
+				return xpad;
+			}
+		}
+		xpad++;
+	}
+	return xpad;
 }
 
 void tetris_move_current_left(struct tetris *t)
@@ -141,7 +150,8 @@ void tetris_move_current_left(struct tetris *t)
 
 void tetris_move_current_right(struct tetris *t)
 {
-	t->current_x++;
+	if (t->current_x + (SHAPE_BOUNDING_BOX_SIZE - tetris_current_right_bbox_padding(t)) < PLAYFIELD_WIDTH)
+		t->current_x++;
 }
 
 void tetris_bag_next(struct tetris *t, struct tetromino *ret)
