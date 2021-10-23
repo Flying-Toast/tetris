@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/random.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include "tetris.h"
 
@@ -29,9 +29,7 @@ static const Uint8 squarecolors[][3] = {
 
 static void seed_rng(void)
 {
-	unsigned int seed;
-	getrandom(&seed, sizeof(seed), 0);
-	srand(seed);
+	srand(time(NULL));
 }
 
 static void clean_exit(int err)
@@ -73,9 +71,7 @@ static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 {
 #ifdef ENABLE_DISCOTIME
 	if (discotime && sq != SQUARE_EMPTY) {
-		Uint8 color[3];
-		getrandom(color, sizeof(color), GRND_NONBLOCK);
-		SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
+		SDL_SetRenderDrawColor(renderer, rand(), rand(), rand(), 255);
 	} else {
 #endif
 		set_sdl_square_color(sq, renderer);
