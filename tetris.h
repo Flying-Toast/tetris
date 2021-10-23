@@ -59,8 +59,6 @@ struct tetris {
 	struct tetromino current_tetromino;
 	int current_y;
 	int current_x;
-
-	int slam_y;
 };
 
 void tetris_init(struct tetris *t);
@@ -70,5 +68,7 @@ void tetris_tick(struct tetris *t);
 void tetris_move_current(struct tetris *t, enum xdirection dir);
 
 void tetris_slam(struct tetris *t);
+
+int tetris_slammed_y(struct tetris *t);
 
 #endif

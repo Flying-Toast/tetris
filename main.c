@@ -116,7 +116,7 @@ static void tetris_render_current(struct tetris *const t, SDL_Renderer *renderer
 
 static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
 {
-	tetris_render_current_at_y(t, t->slam_y, true, renderer);
+	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
 }
 
 static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)

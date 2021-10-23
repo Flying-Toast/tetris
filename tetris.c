@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #include "tetris.h"
 
-static int tetris_slammed_y(struct tetris *t);
-
 static const enum square shape_colors[NUM_SHAPES] = {
 	[SHAPE_I] = SQUARE_CYAN,
 	[SHAPE_J] = SQUARE_BLUE,
@@ -128,7 +126,6 @@ static void tetris_spawn_piece(struct tetris *t)
 	tetris_bag_next(t, &t->current_tetromino);
 	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
 	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
-	t->slam_y = tetris_slammed_y(t);
 }
 
 void tetris_init(struct tetris *t)
@@ -151,12 +148,12 @@ static void tetris_blit_current(struct tetris *t)
 	}
 }
 
-static bool tetris_invalid_current_pos(struct tetris *const t)
+static bool tetris_invalid_current_at_y(struct tetris *const t, int at_y)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			int cx = t->current_x + x;
-			int cy = t->current_y + y;
+			int cy = at_y + y;
 			enum square curr = t->current_tetromino.squares[y][x];
 
 			if (curr == SQUARE_EMPTY)
@@ -173,6 +170,11 @@ static bool tetris_invalid_current_pos(struct tetris *const t)
 		}
 	}
 	return false;
+}
+
+static bool tetris_invalid_current_pos(struct tetris *const t)
+{
+	return tetris_invalid_current_at_y(t, t->current_y);
 }
 
 static bool tetris_move_current_down(struct tetris *t)
@@ -199,7 +201,6 @@ void tetris_move_current(struct tetris *t, enum xdirection dir)
 	t->current_x += dir;
 	if (tetris_invalid_current_pos(t))
 		t->current_x -= dir;
-	t->slam_y = tetris_slammed_y(t);
 }
 
 void tetris_slam(struct tetris *t)
@@ -211,12 +212,10 @@ void tetris_slam(struct tetris *t)
 		;
 }
 
-static int tetris_slammed_y(struct tetris *t)
+int tetris_slammed_y(struct tetris *const t)
 {
-	int saved_y = t->current_y;
-	int slammed_y;
-	tetris_slam(t);
-	slammed_y = t->current_y;
-	t->current_y = saved_y;
-	return slammed_y;
+	int slammed_y = t->current_y;
+	while (!tetris_invalid_current_at_y(t, slammed_y))
+		slammed_y++;
+	return slammed_y - 1;
 }
