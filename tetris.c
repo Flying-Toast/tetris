@@ -129,7 +129,7 @@ static bool tetris_invalid_current_pos(struct tetris *const t)
 			if (curr == SQUARE_EMPTY)
 				continue;
 
-			if (cy < 0 || cy > PLAYFIELD_VISIBLE_HEIGHT - 1)
+			if (cy < 0 || cy > PLAYFIELD_HEIGHT - 1)
 				return true;
 
 			if (cx < 0 || cx > PLAYFIELD_WIDTH - 1)
