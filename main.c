@@ -6,7 +6,7 @@
 
 #define SQUARE_SIZE (30)
 #define WINDOW_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
-#define WINDOW_HEIGHT (SQUARE_SIZE * PLAYFIELD_HEIGHT)
+#define WINDOW_HEIGHT (SQUARE_SIZE * VISIBLE_PLAYFIELD_HEIGHT)
 #define ENABLE_DISCOTIME
 
 static SDL_Window *win;
@@ -82,7 +82,7 @@ static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 	rect.w = SQUARE_SIZE;
 	rect.h = SQUARE_SIZE;
 	rect.x = x * SQUARE_SIZE;
-	rect.y = y * SQUARE_SIZE;
+	rect.y = (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE;
 	SDL_RenderFillRect(renderer, &rect);
 }
 
@@ -100,7 +100,7 @@ static void tetris_render_current(struct tetris *const t, SDL_Renderer *renderer
 
 static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
-	for (int y = 0; y < PLAYFIELD_HEIGHT; y++) {
+	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
 			render_square(t->playfield[y][x], x, y, renderer);
 		}

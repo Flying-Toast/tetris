@@ -95,7 +95,7 @@ static void tetris_spawn_piece(struct tetris *t)
 {
 	tetris_bag_next(t, &t->current_tetromino);
 	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
-	t->current_y = 0;
+	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
 }
 
 void tetris_init(struct tetris *t)
