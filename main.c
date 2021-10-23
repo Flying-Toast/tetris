@@ -69,8 +69,11 @@ static void init(void)
 
 static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 {
+	if (sq == SQUARE_EMPTY)
+		return;
+
 #ifdef ENABLE_DISCOTIME
-	if (discotime && sq != SQUARE_EMPTY) {
+	if (discotime) {
 		SDL_SetRenderDrawColor(renderer, rand(), rand(), rand(), 255);
 	} else {
 #endif
@@ -91,15 +94,16 @@ static void tetris_render_current(struct tetris *const t, SDL_Renderer *renderer
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			enum square curr = t->current_tetromino.squares[y][x];
-			if (curr != SQUARE_EMPTY) {
-				render_square(curr, x + t->current_x, y + t->current_y, renderer);
-			}
+			render_square(curr, x + t->current_x, y + t->current_y, renderer);
 		}
 	}
 }
 
 static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
+	set_sdl_square_color(SQUARE_EMPTY, renderer);
+	SDL_RenderClear(renderer);
+
 	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
 			render_square(t->playfield[y][x], x, y, renderer);
