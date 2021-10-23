@@ -93,6 +93,36 @@ static void tetris_bag_next(struct tetris *t, struct tetromino *ret)
 	*ret = t->bag[--(t->bag_remaining)];
 }
 
+static void tetris_clear_single_line(struct tetris *t, int line_y)
+{
+	for (int y = line_y; y > 0; y--) {
+		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
+			t->playfield[y][x] = t->playfield[y - 1][x];
+		}
+	}
+
+	for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
+		t->playfield[0][x] = SQUARE_EMPTY;
+	}
+}
+
+static void tetris_clear_lines(struct tetris *t)
+{
+	for (int y = PLAYFIELD_HEIGHT - 1; y >= 0; y--) {
+		bool line_full = true;
+
+		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
+			if (t->playfield[y][x] == SQUARE_EMPTY) {
+				line_full = false;
+				break;
+			}
+		}
+
+		if (line_full)
+			tetris_clear_single_line(t, y);
+	}
+}
+
 static void tetris_spawn_piece(struct tetris *t)
 {
 	tetris_bag_next(t, &t->current_tetromino);
@@ -161,6 +191,7 @@ void tetris_tick(struct tetris *t)
 		tetris_blit_current(t);
 		tetris_spawn_piece(t);
 	}
+	tetris_clear_lines(t);
 }
 
 void tetris_move_current(struct tetris *t, enum xdirection dir)
