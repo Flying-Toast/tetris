@@ -7,9 +7,14 @@
 #define SQUARE_SIZE (30)
 #define WINDOW_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
 #define WINDOW_HEIGHT (SQUARE_SIZE * PLAYFIELD_VISIBLE_HEIGHT)
+#define ENABLE_DISCOTIME
 
 static SDL_Window *win;
 static SDL_Renderer *rndr;
+
+#ifdef ENABLE_DISCOTIME
+static bool discotime = false;
+#endif
 
 static const Uint8 squarecolors[][3] = {
 	[SQUARE_EMPTY] = {0, 0, 0},
@@ -66,7 +71,17 @@ static void init(void)
 
 static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 {
-	set_sdl_square_color(sq, renderer);
+#ifdef ENABLE_DISCOTIME
+	if (discotime && sq != SQUARE_EMPTY) {
+		Uint8 color[3];
+		getrandom(color, sizeof(color), GRND_NONBLOCK);
+		SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
+	} else {
+#endif
+		set_sdl_square_color(sq, renderer);
+#ifdef ENABLE_DISCOTIME
+	}
+#endif
 	SDL_Rect rect;
 	rect.w = SQUARE_SIZE;
 	rect.h = SQUARE_SIZE;
@@ -98,6 +113,10 @@ int main(int argc, char **argv)
 	init();
 	struct tetris tet;
 	tetris_init(&tet);
+#ifdef ENABLE_DISCOTIME
+	if (strstr(argv[0], "discotime"))
+		discotime = true;
+#endif
 
 	Uint32 last_tick = SDL_GetTicks();
 	const Uint8 *kstate = SDL_GetKeyboardState(NULL);
