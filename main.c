@@ -86,14 +86,8 @@ static void render_square(enum square sq, int x, int y, SDL_Renderer *renderer)
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_current(struct tetris *const t, SDL_Renderer *renderer)
 {
-	for (int y = 0; y < PLAYFIELD_HEIGHT; y++) {
-		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
-			render_square(t->playfield[y][x], x, y, renderer);
-		}
-	}
-
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			enum square curr = t->current_tetromino.squares[y][x];
@@ -102,6 +96,17 @@ static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 			}
 		}
 	}
+}
+
+static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+{
+	for (int y = 0; y < PLAYFIELD_HEIGHT; y++) {
+		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
+			render_square(t->playfield[y][x], x, y, renderer);
+		}
+	}
+
+	tetris_render_current(t, renderer);
 }
 
 int main(int argc, char **argv)
