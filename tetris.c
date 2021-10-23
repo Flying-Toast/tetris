@@ -163,19 +163,11 @@ void tetris_tick(struct tetris *t)
 	}
 }
 
-void tetris_move_current_left(struct tetris *t)
+void tetris_move_current(struct tetris *t, enum xdirection dir)
 {
-	t->current_x--;
+	t->current_x += dir;
 	if (tetris_invalid_current_pos(t))
-		t->current_x++;
-	t->slam_y = tetris_slammed_y(t);
-}
-
-void tetris_move_current_right(struct tetris *t)
-{
-	t->current_x++;
-	if (tetris_invalid_current_pos(t))
-		t->current_x--;
+		t->current_x -= dir;
 	t->slam_y = tetris_slammed_y(t);
 }
 

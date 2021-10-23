@@ -38,6 +38,11 @@ enum square {
 	SQUARE_RED
 };
 
+enum xdirection {
+	XDIRECTION_LEFT = -1,
+	XDIRECTION_RIGHT = 1,
+};
+
 struct tetromino {
 	enum shape shape;
 	enum square squares[SHAPE_BOUNDING_BOX_SIZE][SHAPE_BOUNDING_BOX_SIZE];
@@ -62,8 +67,8 @@ void tetris_init(struct tetris *t);
 
 void tetris_tick(struct tetris *t);
 
-void tetris_move_current_left(struct tetris *t);
-void tetris_move_current_right(struct tetris *t);
+void tetris_move_current(struct tetris *t, enum xdirection dir);
+
 void tetris_slam(struct tetris *t);
 
 #endif
