@@ -142,11 +142,19 @@ static bool tetris_invalid_current_pos(struct tetris *const t)
 	return false;
 }
 
-void tetris_tick(struct tetris *t)
+bool tetris_move_current_down(struct tetris *t)
 {
 	t->current_y++;
 	if (tetris_invalid_current_pos(t)) {
 		t->current_y--;
+		return false;
+	}
+	return true;
+}
+
+void tetris_tick(struct tetris *t)
+{
+	if (!tetris_move_current_down(t)) {
 		tetris_blit_current(t);
 		tetris_spawn_piece(t);
 	}
@@ -164,4 +172,13 @@ void tetris_move_current_right(struct tetris *t)
 	t->current_x++;
 	if (tetris_invalid_current_pos(t))
 		t->current_x--;
+}
+
+void tetris_slam(struct tetris *t)
+{
+	if (tetris_invalid_current_pos(t))
+		return;
+
+	while (tetris_move_current_down(t))
+		;
 }

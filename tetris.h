@@ -12,7 +12,7 @@
 #define PLAYFIELD_SPAWN_HEIGHT (PLAYFIELD_VISIBLE_START - 2)
 
 #define DEFAULT_TICK_INTERVAL (100)
-#define SLAM_TICK_INTERVAL (DEFAULT_TICK_INTERVAL / 4)
+#define FAST_TICK_INTERVAL (DEFAULT_TICK_INTERVAL / 4)
 
 #define SHAPE_BOUNDING_BOX_SIZE (4)
 
@@ -62,5 +62,6 @@ void tetris_tick(struct tetris *t);
 
 void tetris_move_current_left(struct tetris *t);
 void tetris_move_current_right(struct tetris *t);
+void tetris_slam(struct tetris *t);
 
 #endif

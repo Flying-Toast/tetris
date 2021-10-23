@@ -133,7 +133,9 @@ int main(int argc, char **argv)
 				if (e.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 					tetris_move_current_right(&tet);
 				if (e.key.keysym.scancode == SDL_SCANCODE_DOWN)
-					tet.tick_interval = SLAM_TICK_INTERVAL;
+					tet.tick_interval = FAST_TICK_INTERVAL;
+				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+					tetris_slam(&tet);
 			} else if (e.type == SDL_KEYUP) {
 				if (!kstate[SDL_SCANCODE_DOWN])
 					tet.tick_interval = DEFAULT_TICK_INTERVAL;
