@@ -54,6 +54,8 @@ struct tetris {
 	struct tetromino current_tetromino;
 	int current_y;
 	int current_x;
+
+	int slam_y;
 };
 
 void tetris_init(struct tetris *t);
