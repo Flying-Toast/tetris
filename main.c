@@ -5,13 +5,20 @@
 #include "tetris.h"
 
 #define ENABLE_DISCOTIME
+
 #define SQUARE_SIZE (30)
+
 #define VIEWPORT_PLAYFIELD_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
-#define VIEWPORT_PLAYFIELD_HEIGHT (SQUARE_SIZE * VISIBLE_PLAYFIELD_HEIGHT)
+#define VIEWPORT_QUEUE_WIDTH (250)
+#define VIEWPORT_HOLD_WIDTH (250)
+
 #define GHOST_OPACITY (100)
 
-#define WINDOW_WIDTH (VIEWPORT_PLAYFIELD_WIDTH)
-#define WINDOW_HEIGHT (VIEWPORT_PLAYFIELD_HEIGHT)
+#define WINDOW_WIDTH (VIEWPORT_HOLD_WIDTH + VIEWPORT_PLAYFIELD_WIDTH + VIEWPORT_QUEUE_WIDTH)
+#define WINDOW_HEIGHT (SQUARE_SIZE * VISIBLE_PLAYFIELD_HEIGHT)
+
+#define PIECEBOX_WIDTH (SQUARE_SIZE * SHAPE_BOUNDING_BOX_SIZE)
+#define PIECEBOX_HEIGHT (PIECEBOX_WIDTH)
 
 static const Uint8 squarecolors[][3] = {
 	[SQUARE_EMPTY] = {0, 0, 0},
@@ -25,15 +32,52 @@ static const Uint8 squarecolors[][3] = {
 };
 
 static const Uint8 gameover_bg[] = {255, 10, 12};
+static const Uint8 sidebar_bg[] = {55, 55, 55};
+static const Uint8 piecebox_bg[] = {0, 0, 0};
 
 static SDL_Window *win;
 static SDL_Renderer *rndr;
 
-static const SDL_Rect playfield_viewport = {
+static const SDL_Rect hold_rect = {
+	.x = 0,
+	.y = 0,
+	.w = VIEWPORT_HOLD_WIDTH,
+	.h = WINDOW_HEIGHT,
+};
+
+static const SDL_Rect hold_viewport = {
+	.x = 0,
+	.y = 0,
+	.w = hold_rect.w,
+	.h = hold_rect.h
+};
+
+static const SDL_Rect playfield_rect = {
 	.x = 0,
 	.y = 0,
 	.w = VIEWPORT_PLAYFIELD_WIDTH,
-	.h = VIEWPORT_PLAYFIELD_HEIGHT
+	.h = WINDOW_HEIGHT
+};
+
+static const SDL_Rect playfield_viewport = {
+	.x = VIEWPORT_HOLD_WIDTH,
+	.y = 0,
+	.w = playfield_rect.w,
+	.h = playfield_rect.h
+};
+
+static const SDL_Rect queue_rect = {
+	.x = 0,
+	.y = 0,
+	.w = VIEWPORT_PLAYFIELD_WIDTH,
+	.h = WINDOW_HEIGHT
+};
+
+static const SDL_Rect queue_viewport = {
+	.x = VIEWPORT_HOLD_WIDTH + VIEWPORT_PLAYFIELD_WIDTH,
+	.y = 0,
+	.w = queue_rect.w,
+	.h = queue_rect.h
 };
 
 #ifdef ENABLE_DISCOTIME
@@ -131,6 +175,30 @@ static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
 	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
 }
 
+static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
+{
+	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
+	SDL_RenderFillRect(renderer, &hold_rect);
+
+	SDL_Rect holdbox = {
+		.x = (VIEWPORT_HOLD_WIDTH - PIECEBOX_WIDTH) / 2,
+		.y = (WINDOW_HEIGHT - PIECEBOX_HEIGHT) / 4,
+		.w = PIECEBOX_WIDTH,
+		.h = PIECEBOX_HEIGHT
+	};
+	SDL_SetRenderDrawColor(renderer, piecebox_bg[0], piecebox_bg[1], piecebox_bg[2], 255);
+	SDL_RenderFillRect(renderer, &holdbox);
+
+	if (t->holding) {
+	}
+}
+
+static void tetris_render_queue(struct tetris *const t, SDL_Renderer *renderer)
+{
+	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
+	SDL_RenderFillRect(renderer, &queue_rect);
+}
+
 static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *renderer)
 {
 	if (t->gameover) {
@@ -138,7 +206,7 @@ static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *render
 	} else {
 		set_sdl_square_color(SQUARE_EMPTY, false, renderer);
 	}
-	SDL_RenderClear(renderer);
+	SDL_RenderFillRect(renderer, &playfield_rect);
 
 	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
@@ -152,8 +220,14 @@ static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *render
 
 static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
+	SDL_RenderSetViewport(renderer, &hold_viewport);
+	tetris_render_hold(t, renderer);
+
 	SDL_RenderSetViewport(renderer, &playfield_viewport);
 	tetris_render_playfield(t, renderer);
+
+	SDL_RenderSetViewport(renderer, &queue_viewport);
+	tetris_render_queue(t, renderer);
 }
 
 int main(int argc, char **argv)
