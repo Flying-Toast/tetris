@@ -171,6 +171,8 @@ int main(int argc, char **argv)
 					tetris_rotate_current(&tet, ROTATION_CW);
 				if (e.key.keysym.scancode == SDL_SCANCODE_Z)
 					tetris_rotate_current(&tet, ROTATION_CCW);
+				if (e.key.keysym.scancode == SDL_SCANCODE_C)
+					tetris_hold(&tet);
 			} else if (e.type == SDL_KEYUP) {
 				if (!kstate[SDL_SCANCODE_DOWN])
 					tet.tick_interval = DEFAULT_TICK_INTERVAL;

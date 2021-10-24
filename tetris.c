@@ -156,6 +156,8 @@ void tetris_init(struct tetris *t)
 	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
 	t->tick_interval = DEFAULT_TICK_INTERVAL;
 	t->gameover = false;
+	t->can_hold = true;
+	t->holding = false;
 	tetris_spawn_piece(t);
 }
 
@@ -218,6 +220,7 @@ void tetris_tick(struct tetris *t)
 	if (!tetris_move_current_down(t)) {
 		tetris_blit_current(t);
 		tetris_spawn_piece(t);
+		t->can_hold = true;
 		if (tetris_invalid_current_pos(t))
 			t->gameover = true;
 	}
@@ -277,5 +280,22 @@ void tetris_rotate_current(struct tetris *t, enum rotation_dir dir)
 
 	if (tetris_invalid_current_pos(t)) {
 		memcpy(t->current_tetromino.squares, tmpsquares, sizeof(tmpsquares));
+	}
+}
+
+void tetris_hold(struct tetris *t)
+{
+	if (!t->can_hold)
+		return;
+	t->can_hold = false;
+
+	if (t->holding) {
+		struct tetromino tmp = t->current_tetromino;
+		t->current_tetromino = t->held_tetromino;
+		t->held_tetromino = tmp;
+	} else {
+		t->held_tetromino = t->current_tetromino;
+		t->holding = true;
+		tetris_spawn_piece(t);
 	}
 }

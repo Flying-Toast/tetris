@@ -66,6 +66,10 @@ struct tetris {
 	int current_x;
 
 	bool gameover;
+
+	bool can_hold;
+	bool holding;
+	struct tetromino held_tetromino;
 };
 
 void tetris_init(struct tetris *t);
@@ -79,5 +83,7 @@ void tetris_slam(struct tetris *t);
 int tetris_slammed_y(struct tetris *t);
 
 void tetris_rotate_current(struct tetris *t, enum rotation_dir dir);
+
+void tetris_hold(struct tetris *t);
 
 #endif
