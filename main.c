@@ -197,7 +197,15 @@ static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
 	if (t->holding) {
 		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 			for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-				render_square(t->held_tetromino.squares[y][x], holdbox.x + (x * SQUARE_SIZE), holdbox.y + (y * SQUARE_SIZE), false, renderer);
+				int min_x = tetromino_min_x(&t->held_tetromino);
+				int min_y = tetromino_min_y(&t->held_tetromino);
+				int piece_width = (tetromino_max_x(&t->held_tetromino) - min_x) * SQUARE_SIZE;
+				int piece_height = (tetromino_max_y(&t->held_tetromino) - min_y) * SQUARE_SIZE;
+				int renderx = holdbox.x + ((PIECEBOX_WIDTH - piece_width) / 2) + (x * SQUARE_SIZE) - (((min_x + 1) * SQUARE_SIZE) / 2);
+				int rendery = holdbox.y + ((PIECEBOX_HEIGHT - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
+				renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
+				rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
+				render_square(t->held_tetromino.squares[y][x], renderx, rendery, false, renderer);
 			}
 		}
 	}
