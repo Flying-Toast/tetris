@@ -42,7 +42,7 @@ static int shape_bounds(enum shape s)
 static void tetromino_init(struct tetromino *tm, enum shape shape)
 {
 	tm->shape = shape;
-	memset(tm->squares, SQUARE_EMPTY, sizeof(enum square) * SHAPE_BOUNDING_BOX_SIZE * SHAPE_BOUNDING_BOX_SIZE);
+	memset(tm->squares, SQUARE_EMPTY, sizeof(tm->squares));
 	enum square color = shape_color(shape);
 	switch (shape) {
 	case SHAPE_I:
