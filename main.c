@@ -4,11 +4,14 @@
 #include <SDL2/SDL.h>
 #include "tetris.h"
 
-#define SQUARE_SIZE (30)
-#define WINDOW_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
-#define WINDOW_HEIGHT (SQUARE_SIZE * VISIBLE_PLAYFIELD_HEIGHT)
 #define ENABLE_DISCOTIME
+#define SQUARE_SIZE (30)
+#define VIEWPORT_PLAYFIELD_WIDTH (SQUARE_SIZE * PLAYFIELD_WIDTH)
+#define VIEWPORT_PLAYFIELD_HEIGHT (SQUARE_SIZE * VISIBLE_PLAYFIELD_HEIGHT)
 #define GHOST_OPACITY (100)
+
+#define WINDOW_WIDTH (VIEWPORT_PLAYFIELD_WIDTH)
+#define WINDOW_HEIGHT (VIEWPORT_PLAYFIELD_HEIGHT)
 
 static const Uint8 squarecolors[][3] = {
 	[SQUARE_EMPTY] = {0, 0, 0},
@@ -25,6 +28,13 @@ static const Uint8 gameover_bg[] = {255, 10, 12};
 
 static SDL_Window *win;
 static SDL_Renderer *rndr;
+
+static const SDL_Rect playfield_viewport = {
+	.x = 0,
+	.y = 0,
+	.w = VIEWPORT_PLAYFIELD_WIDTH,
+	.h = VIEWPORT_PLAYFIELD_HEIGHT
+};
 
 #ifdef ENABLE_DISCOTIME
 static bool discotime = false;
@@ -121,7 +131,7 @@ static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
 	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
 }
 
-static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *renderer)
 {
 	if (t->gameover) {
 		SDL_SetRenderDrawColor(renderer, gameover_bg[0], gameover_bg[1], gameover_bg[2], 255);
@@ -138,6 +148,12 @@ static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 
 	tetris_render_current(t, renderer);
 	tetris_render_ghost(t, renderer);
+}
+
+static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+{
+	SDL_RenderSetViewport(renderer, &playfield_viewport);
+	tetris_render_playfield(t, renderer);
 }
 
 int main(int argc, char **argv)
