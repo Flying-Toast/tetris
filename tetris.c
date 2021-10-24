@@ -155,6 +155,8 @@ void tetris_init(struct tetris *t)
 	t->bag_remaining = 0;
 	memset(&t->playfield, SQUARE_EMPTY, sizeof(t->playfield));
 	t->tick_interval = DEFAULT_TICK_INTERVAL;
+	t->gameover = false;
+	t->spawned_this_tick = true;
 	tetris_spawn_piece(t);
 }
 
@@ -211,9 +213,17 @@ static bool tetris_move_current_down(struct tetris *t)
 
 void tetris_tick(struct tetris *t)
 {
+	if (tetris_invalid_current_pos(t) && t->spawned_this_tick)
+		t->gameover = true;
+	t->spawned_this_tick = false;
+
+	if (t->gameover)
+		return;
+
 	if (!tetris_move_current_down(t)) {
 		tetris_blit_current(t);
 		tetris_spawn_piece(t);
+		t->spawned_this_tick = true;
 	}
 	tetris_clear_lines(t);
 }
