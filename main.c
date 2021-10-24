@@ -28,6 +28,8 @@ static const Uint8 squarecolors[][3] = {
 	[SQUARE_PURPLE] = {120, 11, 183}
 };
 
+static const Uint8 gameover_bg[] = {255, 10, 12};
+
 static void seed_rng(void)
 {
 	srand(time(NULL));
@@ -121,7 +123,11 @@ static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
 
 static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
 {
-	set_sdl_square_color(SQUARE_EMPTY, false, renderer);
+	if (t->gameover) {
+		SDL_SetRenderDrawColor(renderer, gameover_bg[0], gameover_bg[1], gameover_bg[2], 255);
+	} else {
+		set_sdl_square_color(SQUARE_EMPTY, false, renderer);
+	}
 	SDL_RenderClear(renderer);
 
 	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
@@ -168,6 +174,8 @@ int main(int argc, char **argv)
 			} else if (e.type == SDL_KEYUP) {
 				if (!kstate[SDL_SCANCODE_DOWN])
 					tet.tick_interval = DEFAULT_TICK_INTERVAL;
+			} else if (e.type == SDL_MOUSEBUTTONDOWN && tet.gameover) {
+				tetris_init(&tet);
 			}
 		}
 

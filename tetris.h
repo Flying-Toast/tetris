@@ -66,8 +66,6 @@ struct tetris {
 	int current_x;
 
 	bool gameover;
-
-	bool spawned_this_tick;
 };
 
 void tetris_init(struct tetris *t);
