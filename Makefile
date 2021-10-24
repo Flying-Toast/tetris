@@ -1,6 +1,6 @@
 CC=gcc
 OBJECTS=main.o tetris.o
-CFLAGS=-Wall -g
+CFLAGS=-Wall
 LIBS=-lSDL2 -lm
 
 tetris: $(OBJECTS)
