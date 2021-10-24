@@ -43,6 +43,11 @@ enum xdirection {
 	XDIRECTION_RIGHT = 1,
 };
 
+enum rotation_dir {
+	ROTATION_CW,
+	ROTATION_CCW,
+};
+
 struct tetromino {
 	enum shape shape;
 	enum square squares[SHAPE_BOUNDING_BOX_SIZE][SHAPE_BOUNDING_BOX_SIZE];
@@ -70,5 +75,7 @@ void tetris_move_current(struct tetris *t, enum xdirection dir);
 void tetris_slam(struct tetris *t);
 
 int tetris_slammed_y(struct tetris *t);
+
+void tetris_rotate_current(struct tetris *t, enum rotation_dir dir);
 
 #endif

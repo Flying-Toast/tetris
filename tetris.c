@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "tetris.h"
 
-static const enum square shape_colors[NUM_SHAPES] = {
+static const enum square shape_colors[] = {
 	[SHAPE_I] = SQUARE_CYAN,
 	[SHAPE_J] = SQUARE_BLUE,
 	[SHAPE_L] = SQUARE_ORANGE,
@@ -12,6 +12,12 @@ static const enum square shape_colors[NUM_SHAPES] = {
 	[SHAPE_S] = SQUARE_GREEN,
 	[SHAPE_T] = SQUARE_PURPLE,
 	[SHAPE_Z] = SQUARE_RED
+};
+
+static const int cw_3x3_rot[3][3][2] = {
+	{{2, 0}, {1, 0}, {0, 0}},
+	{{2, 1}, {1, 1}, {0, 1}},
+	{{2, 2}, {1, 2}, {0, 2}}
 };
 
 static enum square shape_color(enum shape s)
@@ -212,6 +218,8 @@ void tetris_slam(struct tetris *t)
 
 	while (tetris_move_current_down(t))
 		;
+
+	tetris_tick(t);
 }
 
 int tetris_slammed_y(struct tetris *const t)
@@ -220,4 +228,31 @@ int tetris_slammed_y(struct tetris *const t)
 	while (!tetris_invalid_current_at_y(t, slammed_y))
 		slammed_y++;
 	return slammed_y - 1;
+}
+
+void tetris_rotate_current(struct tetris *t, enum rotation_dir dir)
+{
+	if (t->current_tetromino.shape == SHAPE_O)
+		return;
+
+	enum square tmpsquares[SHAPE_BOUNDING_BOX_SIZE][SHAPE_BOUNDING_BOX_SIZE];
+	memcpy(tmpsquares, t->current_tetromino.squares, sizeof(tmpsquares));
+
+	if (t->current_tetromino.shape == SHAPE_I) {
+	} else {
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				const int *coords = cw_3x3_rot[y][x];
+				if (dir == ROTATION_CW) {
+					t->current_tetromino.squares[y][x] = tmpsquares[coords[0]][coords[1]];
+				} else {
+					t->current_tetromino.squares[coords[0]][coords[1]] = tmpsquares[y][x];
+				}
+			}
+		}
+	}
+
+	if (tetris_invalid_current_pos(t)) {
+		memcpy(t->current_tetromino.squares, tmpsquares, sizeof(tmpsquares));
+	}
 }

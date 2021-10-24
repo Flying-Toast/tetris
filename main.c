@@ -161,6 +161,10 @@ int main(int argc, char **argv)
 					tet.tick_interval = FAST_TICK_INTERVAL;
 				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 					tetris_slam(&tet);
+				if (e.key.keysym.scancode == SDL_SCANCODE_X)
+					tetris_rotate_current(&tet, ROTATION_CW);
+				if (e.key.keysym.scancode == SDL_SCANCODE_Z)
+					tetris_rotate_current(&tet, ROTATION_CCW);
 			} else if (e.type == SDL_KEYUP) {
 				if (!kstate[SDL_SCANCODE_DOWN])
 					tet.tick_interval = DEFAULT_TICK_INTERVAL;
