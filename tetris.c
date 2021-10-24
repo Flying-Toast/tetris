@@ -20,9 +20,23 @@ static const int cw_3x3_rot[3][3][2] = {
 	{{2, 2}, {1, 2}, {0, 2}}
 };
 
+static const int cw_4x4_rot[4][4][2] = {
+	{{3, 0}, {2, 0}, {1, 0}, {0, 0}},
+	{{3, 1}, {2, 1}, {1, 1}, {0, 1}},
+	{{3, 2}, {2, 2}, {1, 2}, {0, 2}},
+	{{3, 3}, {2, 3}, {1, 3}, {0, 3}}
+};
+
 static enum square shape_color(enum shape s)
 {
 	return shape_colors[s];
+}
+
+static int shape_bounds(enum shape s)
+{
+	if (s == SHAPE_I)
+		return 4;
+	return 3;
 }
 
 static void tetromino_init(struct tetromino *tm, enum shape shape)
@@ -237,17 +251,20 @@ void tetris_rotate_current(struct tetris *t, enum rotation_dir dir)
 
 	enum square tmpsquares[SHAPE_BOUNDING_BOX_SIZE][SHAPE_BOUNDING_BOX_SIZE];
 	memcpy(tmpsquares, t->current_tetromino.squares, sizeof(tmpsquares));
+	int bounds = shape_bounds(t->current_tetromino.shape);
 
-	if (t->current_tetromino.shape == SHAPE_I) {
-	} else {
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				const int *coords = cw_3x3_rot[y][x];
-				if (dir == ROTATION_CW) {
-					t->current_tetromino.squares[y][x] = tmpsquares[coords[0]][coords[1]];
-				} else {
-					t->current_tetromino.squares[coords[0]][coords[1]] = tmpsquares[y][x];
-				}
+	for (int y = 0; y < bounds; y++) {
+		for (int x = 0; x < bounds; x++) {
+			const int *coords;
+			if (bounds == 3) {
+				coords = cw_3x3_rot[y][x];
+			} else {
+				coords = cw_4x4_rot[y][x];
+			}
+			if (dir == ROTATION_CW) {
+				t->current_tetromino.squares[y][x] = tmpsquares[coords[0]][coords[1]];
+			} else {
+				t->current_tetromino.squares[coords[0]][coords[1]] = tmpsquares[y][x];
 			}
 		}
 	}
