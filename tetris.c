@@ -117,8 +117,8 @@ static void tetris_clear_lines(struct tetris *t)
 		}
 
 		if (line_full) {
-			y++; // process this same y level again because we just shifted a new row down into it
 			tetris_clear_single_line(t, y);
+			y++; // process this same y level again because we just shifted a new row down into it
 		}
 	}
 }
