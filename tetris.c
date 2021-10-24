@@ -149,9 +149,16 @@ static void tetris_reset_current_loc(struct tetris *t)
 	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
 }
 
+int tetris_queue_real_index(struct tetris *t, int idx)
+{
+	return (t->queue_start + idx) % QUEUE_LENGTH;
+}
+
 static void tetris_spawn_piece(struct tetris *t)
 {
-	tetris_bag_next(t, &t->current_tetromino);
+	t->current_tetromino = t->queue[t->queue_start];
+	tetris_bag_next(t, &t->queue[t->queue_start]);
+	t->queue_start = (t->queue_start + 1) % QUEUE_LENGTH;
 	tetris_reset_current_loc(t);
 }
 
@@ -163,6 +170,9 @@ void tetris_init(struct tetris *t)
 	t->gameover = false;
 	t->can_hold = true;
 	t->holding = false;
+	t->queue_start = 0;
+	for (int i = 0; i < QUEUE_LENGTH; i++)
+		tetris_bag_next(t, t->queue + i);
 	tetris_spawn_piece(t);
 }
 

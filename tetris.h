@@ -16,6 +16,8 @@
 
 #define SHAPE_BOUNDING_BOX_SIZE (4)
 
+#define QUEUE_LENGTH (3)
+
 enum shape {
 	SHAPE_I = 0,
 	SHAPE_J,
@@ -70,6 +72,9 @@ struct tetris {
 	bool can_hold;
 	bool holding;
 	struct tetromino held_tetromino;
+
+	struct tetromino queue[QUEUE_LENGTH];
+	int queue_start;
 };
 
 void tetris_init(struct tetris *t);
