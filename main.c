@@ -10,13 +10,6 @@
 #define ENABLE_DISCOTIME
 #define GHOST_OPACITY (100)
 
-static SDL_Window *win;
-static SDL_Renderer *rndr;
-
-#ifdef ENABLE_DISCOTIME
-static bool discotime = false;
-#endif
-
 static const Uint8 squarecolors[][3] = {
 	[SQUARE_EMPTY] = {0, 0, 0},
 	[SQUARE_CYAN] = {2, 248, 252},
@@ -29,6 +22,13 @@ static const Uint8 squarecolors[][3] = {
 };
 
 static const Uint8 gameover_bg[] = {255, 10, 12};
+
+static SDL_Window *win;
+static SDL_Renderer *rndr;
+
+#ifdef ENABLE_DISCOTIME
+static bool discotime = false;
+#endif
 
 static void seed_rng(void)
 {
