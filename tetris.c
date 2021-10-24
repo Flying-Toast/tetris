@@ -143,11 +143,16 @@ static void tetris_clear_lines(struct tetris *t)
 	}
 }
 
+static void tetris_reset_current_loc(struct tetris *t)
+{
+	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
+	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
+}
+
 static void tetris_spawn_piece(struct tetris *t)
 {
 	tetris_bag_next(t, &t->current_tetromino);
-	t->current_x = SHAPE_BOUNDING_BOX_SIZE / 2 + 1;
-	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
+	tetris_reset_current_loc(t);
 }
 
 void tetris_init(struct tetris *t)
@@ -293,6 +298,7 @@ void tetris_hold(struct tetris *t)
 		struct tetromino tmp = t->current_tetromino;
 		t->current_tetromino = t->held_tetromino;
 		t->held_tetromino = tmp;
+		tetris_reset_current_loc(t);
 	} else {
 		t->held_tetromino = t->current_tetromino;
 		t->holding = true;
