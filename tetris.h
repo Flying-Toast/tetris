@@ -91,4 +91,6 @@ void tetris_rotate_current(struct tetris *t, enum rotation_dir dir);
 
 void tetris_hold(struct tetris *t);
 
+int tetris_queue_real_index(struct tetris *t, int idx);
+
 #endif
