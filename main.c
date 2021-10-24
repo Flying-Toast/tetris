@@ -180,6 +180,54 @@ static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
 	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
 }
 
+static int tetromino_min_x(struct tetromino *const tm)
+{
+	for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+			if (tm->squares[y][x] != SQUARE_EMPTY)
+				return x - 1;
+		}
+	}
+
+	return SHAPE_BOUNDING_BOX_SIZE - 2;
+}
+
+static int tetromino_min_y(struct tetromino *const tm)
+{
+	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			if (tm->squares[y][x] != SQUARE_EMPTY)
+				return y - 1;
+		}
+	}
+
+	return SHAPE_BOUNDING_BOX_SIZE - 2;
+}
+
+static int tetromino_max_x(struct tetromino *const tm)
+{
+	for (int x = SHAPE_BOUNDING_BOX_SIZE - 1; x > 0; x--) {
+		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+			if (tm->squares[y][x] != SQUARE_EMPTY)
+				return x;
+		}
+	}
+
+	return 0;
+}
+
+static int tetromino_max_y(struct tetromino *const tm)
+{
+	for (int y = SHAPE_BOUNDING_BOX_SIZE - 1; y > 0; y--) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			if (tm->squares[y][x] != SQUARE_EMPTY)
+				return y;
+		}
+	}
+
+	return 0;
+}
+
 static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);

@@ -86,12 +86,4 @@ void tetris_rotate_current(struct tetris *t, enum rotation_dir dir);
 
 void tetris_hold(struct tetris *t);
 
-int tetromino_min_x(struct tetromino *const tm);
-
-int tetromino_min_y(struct tetromino *const tm);
-
-int tetromino_max_x(struct tetromino *const tm);
-
-int tetromino_max_y(struct tetromino *const tm);
-
 #endif
