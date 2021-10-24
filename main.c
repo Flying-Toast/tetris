@@ -150,9 +150,14 @@ static void render_square(enum square sq, int x, int y, bool ghost, SDL_Renderer
 	SDL_Rect rect;
 	rect.w = SQUARE_SIZE;
 	rect.h = SQUARE_SIZE;
-	rect.x = x * SQUARE_SIZE;
-	rect.y = (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE;
+	rect.x = x;
+	rect.y = y;
 	SDL_RenderFillRect(renderer, &rect);
+}
+
+static void render_playfield_square(enum square sq, int x, int y, bool ghost, SDL_Renderer *renderer)
+{
+	render_square(sq, x * SQUARE_SIZE, (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE, ghost, renderer);
 }
 
 static void tetris_render_current_at_y(struct tetris *const t, int at_y, bool ghost, SDL_Renderer *renderer)
@@ -160,7 +165,7 @@ static void tetris_render_current_at_y(struct tetris *const t, int at_y, bool gh
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			enum square curr = t->current_tetromino.squares[y][x];
-			render_square(curr, x + t->current_x, y + at_y, ghost, renderer);
+			render_playfield_square(curr, x + t->current_x, y + at_y, ghost, renderer);
 		}
 	}
 }
@@ -190,6 +195,11 @@ static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
 	SDL_RenderFillRect(renderer, &holdbox);
 
 	if (t->holding) {
+		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+			for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+				render_square(t->held_tetromino.squares[y][x], holdbox.x + (x * SQUARE_SIZE), holdbox.y + (y * SQUARE_SIZE), false, renderer);
+			}
+		}
 	}
 }
 
@@ -210,7 +220,7 @@ static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *render
 
 	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
-			render_square(t->playfield[y][x], x, y, false, renderer);
+			render_playfield_square(t->playfield[y][x], x, y, false, renderer);
 		}
 	}
 
