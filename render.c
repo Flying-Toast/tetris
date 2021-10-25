@@ -16,36 +16,15 @@ static const Uint8 gameover_bg[] = {255, 10, 12};
 static const Uint8 sidebar_bg[] = {55, 55, 55};
 static const Uint8 piecebox_bg[] = {0, 0, 0};
 
-static const SDL_Rect hold_rect = {
-	.x = 0,
-	.y = 0,
-	.w = VIEWPORT_HOLD_WIDTH,
-	.h = WINDOW_HEIGHT,
-};
-
 static const SDL_Rect hold_viewport = {
 	.x = 0,
 	.y = 0,
-	.w = hold_rect.w,
-	.h = hold_rect.h
-};
-
-static const SDL_Rect playfield_rect = {
-	.x = 0,
-	.y = 0,
-	.w = VIEWPORT_PLAYFIELD_WIDTH,
+	.w = VIEWPORT_HOLD_WIDTH,
 	.h = WINDOW_HEIGHT
 };
 
 static const SDL_Rect playfield_viewport = {
 	.x = VIEWPORT_HOLD_WIDTH,
-	.y = 0,
-	.w = playfield_rect.w,
-	.h = playfield_rect.h
-};
-
-static const SDL_Rect queue_rect = {
-	.x = 0,
 	.y = 0,
 	.w = VIEWPORT_PLAYFIELD_WIDTH,
 	.h = WINDOW_HEIGHT
@@ -54,15 +33,26 @@ static const SDL_Rect queue_rect = {
 static const SDL_Rect queue_viewport = {
 	.x = VIEWPORT_HOLD_WIDTH + VIEWPORT_PLAYFIELD_WIDTH,
 	.y = 0,
-	.w = queue_rect.w,
-	.h = queue_rect.h
+	.w = VIEWPORT_QUEUE_WIDTH,
+	.h = WINDOW_HEIGHT
 };
 
 #ifdef ENABLE_DISCOTIME
 bool discotime = false;
 #endif
 
-static void set_sdl_square_color(enum square sq, bool ghost, SDL_Renderer *renderer)
+static void clear_current_viewport(SDL_Renderer *renderer, const SDL_Rect *viewport)
+{
+	SDL_Rect area = {
+		.x = 0,
+		.y = 0,
+		.w = viewport->w,
+		.h = viewport->h
+	};
+	SDL_RenderFillRect(renderer, &area);
+}
+
+static void set_sdl_square_color(SDL_Renderer *renderer, enum square sq, bool ghost)
 {
 	if (ghost) {
 		SDL_SetRenderDrawColor(renderer, squarecolors[sq][0], squarecolors[sq][1], squarecolors[sq][2], GHOST_OPACITY);
@@ -71,7 +61,7 @@ static void set_sdl_square_color(enum square sq, bool ghost, SDL_Renderer *rende
 	}
 }
 
-static void render_square(enum square sq, int x, int y, bool ghost, SDL_Renderer *renderer)
+static void render_square(SDL_Renderer *renderer, enum square sq, int x, int y, bool ghost)
 {
 	if (sq == SQUARE_EMPTY)
 		return;
@@ -85,7 +75,7 @@ static void render_square(enum square sq, int x, int y, bool ghost, SDL_Renderer
 		}
 	} else {
 #endif
-		set_sdl_square_color(sq, ghost, renderer);
+		set_sdl_square_color(renderer, sq, ghost);
 #ifdef ENABLE_DISCOTIME
 	}
 #endif
@@ -97,29 +87,29 @@ static void render_square(enum square sq, int x, int y, bool ghost, SDL_Renderer
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-static void render_playfield_square(enum square sq, int x, int y, bool ghost, SDL_Renderer *renderer)
+static void render_playfield_square(SDL_Renderer *renderer, enum square sq, int x, int y, bool ghost)
 {
-	render_square(sq, x * SQUARE_SIZE, (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE, ghost, renderer);
+	render_square(renderer, sq, x * SQUARE_SIZE, (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE, ghost);
 }
 
-static void tetris_render_current_at_y(const struct tetris *t, int at_y, bool ghost, SDL_Renderer *renderer)
+static void tetris_render_current_at_y(SDL_Renderer *renderer, const struct tetris *t, int at_y, bool ghost)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 			enum square curr = t->current_tetromino.squares[y][x];
-			render_playfield_square(curr, x + t->current_x, y + at_y, ghost, renderer);
+			render_playfield_square(renderer, curr, x + t->current_x, y + at_y, ghost);
 		}
 	}
 }
 
-static void tetris_render_current(const struct tetris *t, SDL_Renderer *renderer)
+static void tetris_render_current(SDL_Renderer *renderer, const struct tetris *t)
 {
-	tetris_render_current_at_y(t, t->current_y, false, renderer);
+	tetris_render_current_at_y(renderer, t, t->current_y, false);
 }
 
-static void tetris_render_ghost(const struct tetris *t, SDL_Renderer *renderer)
+static void tetris_render_ghost(SDL_Renderer *renderer, const struct tetris *t)
 {
-	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
+	tetris_render_current_at_y(renderer, t, tetris_slammed_y(t), true);
 }
 
 static int tetromino_min_x(const struct tetromino *tm)
@@ -170,10 +160,10 @@ static int tetromino_max_y(const struct tetromino *tm)
 	return 0;
 }
 
-static void tetris_render_hold(const struct tetris *t, SDL_Renderer *renderer)
+static void tetris_render_hold(SDL_Renderer *renderer, const struct tetris *t)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
-	SDL_RenderFillRect(renderer, &hold_rect);
+	clear_current_viewport(renderer, &hold_viewport);
 
 	SDL_Rect holdbox = {
 		.x = (VIEWPORT_HOLD_WIDTH - PIECEBOX_WIDTH) / 2,
@@ -195,16 +185,16 @@ static void tetris_render_hold(const struct tetris *t, SDL_Renderer *renderer)
 				int rendery = holdbox.y + ((PIECEBOX_HEIGHT - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
 				renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
 				rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
-				render_square(t->held_tetromino.squares[y][x], renderx, rendery, false, renderer);
+				render_square(renderer, t->held_tetromino.squares[y][x], renderx, rendery, false);
 			}
 		}
 	}
 }
 
-static void tetris_render_queue(const struct tetris *t, SDL_Renderer *renderer)
+static void tetris_render_queue(SDL_Renderer *renderer, const struct tetris *t)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
-	SDL_RenderFillRect(renderer, &queue_rect);
+	clear_current_viewport(renderer, &queue_viewport);
 
 	for (int i = 0; i < QUEUE_LENGTH; i++) {
 		SDL_Rect box = {
@@ -227,39 +217,39 @@ static void tetris_render_queue(const struct tetris *t, SDL_Renderer *renderer)
 				int rendery = box.y + ((PIECEBOX_HEIGHT - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
 				renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
 				rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
-				render_square(curr->squares[y][x], renderx, rendery, false, renderer);
+				render_square(renderer, curr->squares[y][x], renderx, rendery, false);
 			}
 		}
 	}
 }
 
-static void tetris_render_playfield(const struct tetris *t, SDL_Renderer *renderer)
+static void tetris_render_playfield(SDL_Renderer *renderer, const struct tetris *t)
 {
 	if (t->gameover) {
 		SDL_SetRenderDrawColor(renderer, gameover_bg[0], gameover_bg[1], gameover_bg[2], 255);
 	} else {
-		set_sdl_square_color(SQUARE_EMPTY, false, renderer);
+		set_sdl_square_color(renderer, SQUARE_EMPTY, false);
 	}
-	SDL_RenderFillRect(renderer, &playfield_rect);
+	clear_current_viewport(renderer, &playfield_viewport);
 
 	for (int y = PLAYFIELD_VISIBLE_START; y < PLAYFIELD_HEIGHT; y++) {
 		for (int x = 0; x < PLAYFIELD_WIDTH; x++) {
-			render_playfield_square(t->playfield[y][x], x, y, false, renderer);
+			render_playfield_square(renderer, t->playfield[y][x], x, y, false);
 		}
 	}
 
-	tetris_render_current(t, renderer);
-	tetris_render_ghost(t, renderer);
+	tetris_render_current(renderer, t);
+	tetris_render_ghost(renderer, t);
 }
 
-void tetris_render(const struct tetris *t, SDL_Renderer *renderer)
+void tetris_render(SDL_Renderer *renderer, const struct tetris *t)
 {
 	SDL_RenderSetViewport(renderer, &hold_viewport);
-	tetris_render_hold(t, renderer);
+	tetris_render_hold(renderer, t);
 
 	SDL_RenderSetViewport(renderer, &playfield_viewport);
-	tetris_render_playfield(t, renderer);
+	tetris_render_playfield(renderer, t);
 
 	SDL_RenderSetViewport(renderer, &queue_viewport);
-	tetris_render_queue(t, renderer);
+	tetris_render_queue(renderer, t);
 }

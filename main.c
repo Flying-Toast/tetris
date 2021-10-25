@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 			tetris_tick(&tet);
 			last_tick = now_tick;
 		}
-		tetris_render(&tet, rndr);
+		tetris_render(rndr, &tet);
 		SDL_RenderPresent(rndr);
 	}
 }

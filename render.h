@@ -21,6 +21,6 @@
 
 extern bool discotime;
 
-void tetris_render(const struct tetris *t, SDL_Renderer *renderer);
+void tetris_render(SDL_Renderer *renderer, const struct tetris *t);
 
 #endif
