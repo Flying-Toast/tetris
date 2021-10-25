@@ -212,7 +212,7 @@ static void render_queue(SDL_Renderer *renderer, const struct tetris *t)
 	clear_current_viewport(renderer, &queue_viewport);
 
 	for (int i = 0; i < QUEUE_LENGTH; i++) {
-		const struct tetromino *curr = &t->queue[tetris_queue_real_index(t, i)];
+		const struct tetromino *curr = tetris_queue_get(t, i);
 		int box_x = (VIEWPORT_HOLD_WIDTH - SHAPE_BOUNDS_PX) / 2;
 		int box_y = ((WINDOW_HEIGHT - SHAPE_BOUNDS_PX) / 4) + (SHAPE_BOUNDS_PX * i);
 		render_piece_in_box(renderer, curr, box_x, box_y);
