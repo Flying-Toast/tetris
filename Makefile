@@ -1,5 +1,5 @@
 CC=gcc
-OBJECTS=main.o tetris.o
+OBJECTS=main.o tetris.o render.o
 CFLAGS=-Wall
 LIBS=-lSDL2 -lm
 
