@@ -160,34 +160,49 @@ static int tetromino_max_y(const struct tetromino *tm)
 	return 0;
 }
 
+static void render_empty_piecebox(SDL_Renderer *renderer, int x, int y)
+{
+	SDL_SetRenderDrawColor(renderer, piecebox_bg[0], piecebox_bg[1], piecebox_bg[2], 255);
+	SDL_Rect box = {
+		.x = x,
+		.y = y,
+		.w = SHAPE_BOUNDS_PX,
+		.h = SHAPE_BOUNDS_PX
+	};
+	SDL_RenderFillRect(renderer, &box);
+}
+
+static void render_piece_in_box(SDL_Renderer *renderer, const struct tetromino *piece, int box_x, int box_y)
+{
+	render_empty_piecebox(renderer, box_x, box_y);
+
+	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
+		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
+			int min_x = tetromino_min_x(piece);
+			int min_y = tetromino_min_y(piece);
+			int piece_width = (tetromino_max_x(piece) - min_x) * SQUARE_SIZE;
+			int piece_height = (tetromino_max_y(piece) - min_y) * SQUARE_SIZE;
+			int renderx = box_x + ((SHAPE_BOUNDS_PX - piece_width) / 2) + (x * SQUARE_SIZE) - (((min_x + 1) * SQUARE_SIZE) / 2);
+			int rendery = box_y + ((SHAPE_BOUNDS_PX - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
+			renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
+			rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
+			render_square(renderer, piece->squares[y][x], renderx, rendery, false);
+		}
+	}
+}
+
 static void render_hold(SDL_Renderer *renderer, const struct tetris *t)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
 	clear_current_viewport(renderer, &hold_viewport);
 
-	SDL_Rect box = {
-		.x = (VIEWPORT_HOLD_WIDTH - SHAPE_BOUNDS_PX) / 2,
-		.y = (WINDOW_HEIGHT - SHAPE_BOUNDS_PX) / 4,
-		.w = SHAPE_BOUNDS_PX,
-		.h = SHAPE_BOUNDS_PX
-	};
-	SDL_SetRenderDrawColor(renderer, piecebox_bg[0], piecebox_bg[1], piecebox_bg[2], 255);
-	SDL_RenderFillRect(renderer, &box);
+	int box_x = (VIEWPORT_HOLD_WIDTH - SHAPE_BOUNDS_PX) / 2;
+	int box_y = (WINDOW_HEIGHT - SHAPE_BOUNDS_PX) / 4;
 
 	if (t->holding) {
-		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
-			for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-				int min_x = tetromino_min_x(&t->held_tetromino);
-				int min_y = tetromino_min_y(&t->held_tetromino);
-				int piece_width = (tetromino_max_x(&t->held_tetromino) - min_x) * SQUARE_SIZE;
-				int piece_height = (tetromino_max_y(&t->held_tetromino) - min_y) * SQUARE_SIZE;
-				int renderx = box.x + ((SHAPE_BOUNDS_PX - piece_width) / 2) + (x * SQUARE_SIZE) - (((min_x + 1) * SQUARE_SIZE) / 2);
-				int rendery = box.y + ((SHAPE_BOUNDS_PX - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
-				renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
-				rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
-				render_square(renderer, t->held_tetromino.squares[y][x], renderx, rendery, false);
-			}
-		}
+		render_piece_in_box(renderer, &t->held_tetromino, box_x, box_y);
+	} else {
+		render_empty_piecebox(renderer, box_x, box_y);
 	}
 }
 
@@ -197,29 +212,10 @@ static void render_queue(SDL_Renderer *renderer, const struct tetris *t)
 	clear_current_viewport(renderer, &queue_viewport);
 
 	for (int i = 0; i < QUEUE_LENGTH; i++) {
-		SDL_Rect box = {
-			.x = (VIEWPORT_HOLD_WIDTH - SHAPE_BOUNDS_PX) / 2,
-			.y = ((WINDOW_HEIGHT - SHAPE_BOUNDS_PX) / 4) + (SHAPE_BOUNDS_PX * i),
-			.w = SHAPE_BOUNDS_PX,
-			.h = SHAPE_BOUNDS_PX
-		};
-		SDL_SetRenderDrawColor(renderer, piecebox_bg[0], piecebox_bg[1], piecebox_bg[2], 255);
-		SDL_RenderFillRect(renderer, &box);
-
-		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
-			for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-				const struct tetromino *curr = &t->queue[tetris_queue_real_index(t, i)];
-				int min_x = tetromino_min_x(curr);
-				int min_y = tetromino_min_y(curr);
-				int piece_width = (tetromino_max_x(curr) - min_x) * SQUARE_SIZE;
-				int piece_height = (tetromino_max_y(curr) - min_y) * SQUARE_SIZE;
-				int renderx = box.x + ((SHAPE_BOUNDS_PX - piece_width) / 2) + (x * SQUARE_SIZE) - (((min_x + 1) * SQUARE_SIZE) / 2);
-				int rendery = box.y + ((SHAPE_BOUNDS_PX - piece_height) / 2) + (y * SQUARE_SIZE) - (((min_y + 1) * SQUARE_SIZE) / 2);
-				renderx -= ((min_x + 1) * SQUARE_SIZE) / 2;
-				rendery -= ((min_y + 1) * SQUARE_SIZE) / 2;
-				render_square(renderer, curr->squares[y][x], renderx, rendery, false);
-			}
-		}
+		const struct tetromino *curr = &t->queue[tetris_queue_real_index(t, i)];
+		int box_x = (VIEWPORT_HOLD_WIDTH - SHAPE_BOUNDS_PX) / 2;
+		int box_y = ((WINDOW_HEIGHT - SHAPE_BOUNDS_PX) / 4) + (SHAPE_BOUNDS_PX * i);
+		render_piece_in_box(renderer, curr, box_x, box_y);
 	}
 }
 
