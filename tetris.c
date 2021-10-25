@@ -149,7 +149,7 @@ static void tetris_reset_current_loc(struct tetris *t)
 	t->current_y = PLAYFIELD_SPAWN_HEIGHT;
 }
 
-int tetris_queue_real_index(struct tetris *t, int idx)
+int tetris_queue_real_index(const struct tetris *t, int idx)
 {
 	return (t->queue_start + idx) % QUEUE_LENGTH;
 }
@@ -188,7 +188,7 @@ static void tetris_blit_current(struct tetris *t)
 	}
 }
 
-static bool tetris_invalid_current_at_y(struct tetris *const t, int at_y)
+static bool tetris_invalid_current_at_y(const struct tetris *t, int at_y)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -212,7 +212,7 @@ static bool tetris_invalid_current_at_y(struct tetris *const t, int at_y)
 	return false;
 }
 
-static bool tetris_invalid_current_pos(struct tetris *const t)
+static bool tetris_invalid_current_pos(const struct tetris *t)
 {
 	return tetris_invalid_current_at_y(t, t->current_y);
 }
@@ -260,7 +260,7 @@ void tetris_slam(struct tetris *t)
 	tetris_tick(t);
 }
 
-int tetris_slammed_y(struct tetris *const t)
+int tetris_slammed_y(const struct tetris *t)
 {
 	int slammed_y = t->current_y;
 	while (!tetris_invalid_current_at_y(t, slammed_y))

@@ -160,7 +160,7 @@ static void render_playfield_square(enum square sq, int x, int y, bool ghost, SD
 	render_square(sq, x * SQUARE_SIZE, (y - PLAYFIELD_VISIBLE_START) * SQUARE_SIZE, ghost, renderer);
 }
 
-static void tetris_render_current_at_y(struct tetris *const t, int at_y, bool ghost, SDL_Renderer *renderer)
+static void tetris_render_current_at_y(const struct tetris *t, int at_y, bool ghost, SDL_Renderer *renderer)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -170,17 +170,17 @@ static void tetris_render_current_at_y(struct tetris *const t, int at_y, bool gh
 	}
 }
 
-static void tetris_render_current(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_current(const struct tetris *t, SDL_Renderer *renderer)
 {
 	tetris_render_current_at_y(t, t->current_y, false, renderer);
 }
 
-static void tetris_render_ghost(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_ghost(const struct tetris *t, SDL_Renderer *renderer)
 {
 	tetris_render_current_at_y(t, tetris_slammed_y(t), true, renderer);
 }
 
-static int tetromino_min_x(struct tetromino *const tm)
+static int tetromino_min_x(const struct tetromino *tm)
 {
 	for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
 		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
@@ -192,7 +192,7 @@ static int tetromino_min_x(struct tetromino *const tm)
 	return SHAPE_BOUNDING_BOX_SIZE - 2;
 }
 
-static int tetromino_min_y(struct tetromino *const tm)
+static int tetromino_min_y(const struct tetromino *tm)
 {
 	for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -204,7 +204,7 @@ static int tetromino_min_y(struct tetromino *const tm)
 	return SHAPE_BOUNDING_BOX_SIZE - 2;
 }
 
-static int tetromino_max_x(struct tetromino *const tm)
+static int tetromino_max_x(const struct tetromino *tm)
 {
 	for (int x = SHAPE_BOUNDING_BOX_SIZE - 1; x > 0; x--) {
 		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
@@ -216,7 +216,7 @@ static int tetromino_max_x(struct tetromino *const tm)
 	return 0;
 }
 
-static int tetromino_max_y(struct tetromino *const tm)
+static int tetromino_max_y(const struct tetromino *tm)
 {
 	for (int y = SHAPE_BOUNDING_BOX_SIZE - 1; y > 0; y--) {
 		for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
@@ -228,7 +228,7 @@ static int tetromino_max_y(struct tetromino *const tm)
 	return 0;
 }
 
-static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_hold(const struct tetris *t, SDL_Renderer *renderer)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
 	SDL_RenderFillRect(renderer, &hold_rect);
@@ -259,7 +259,7 @@ static void tetris_render_hold(struct tetris *const t, SDL_Renderer *renderer)
 	}
 }
 
-static void tetris_render_queue(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_queue(const struct tetris *t, SDL_Renderer *renderer)
 {
 	SDL_SetRenderDrawColor(renderer, sidebar_bg[0], sidebar_bg[1], sidebar_bg[2], 255);
 	SDL_RenderFillRect(renderer, &queue_rect);
@@ -276,7 +276,7 @@ static void tetris_render_queue(struct tetris *const t, SDL_Renderer *renderer)
 
 		for (int y = 0; y < SHAPE_BOUNDING_BOX_SIZE; y++) {
 			for (int x = 0; x < SHAPE_BOUNDING_BOX_SIZE; x++) {
-				struct tetromino *curr = &t->queue[tetris_queue_real_index(t, i)];
+				const struct tetromino *curr = &t->queue[tetris_queue_real_index(t, i)];
 				int min_x = tetromino_min_x(curr);
 				int min_y = tetromino_min_y(curr);
 				int piece_width = (tetromino_max_x(curr) - min_x) * SQUARE_SIZE;
@@ -291,7 +291,7 @@ static void tetris_render_queue(struct tetris *const t, SDL_Renderer *renderer)
 	}
 }
 
-static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render_playfield(const struct tetris *t, SDL_Renderer *renderer)
 {
 	if (t->gameover) {
 		SDL_SetRenderDrawColor(renderer, gameover_bg[0], gameover_bg[1], gameover_bg[2], 255);
@@ -310,7 +310,7 @@ static void tetris_render_playfield(struct tetris *const t, SDL_Renderer *render
 	tetris_render_ghost(t, renderer);
 }
 
-static void tetris_render(struct tetris *const t, SDL_Renderer *renderer)
+static void tetris_render(const struct tetris *t, SDL_Renderer *renderer)
 {
 	SDL_RenderSetViewport(renderer, &hold_viewport);
 	tetris_render_hold(t, renderer);
