@@ -5,13 +5,13 @@
 #include "tetris.h"
 
 static const enum square shape_colors[] = {
-	[SHAPE_I] = SQUARE_CYAN,
-	[SHAPE_J] = SQUARE_BLUE,
-	[SHAPE_L] = SQUARE_ORANGE,
-	[SHAPE_O] = SQUARE_YELLOW,
-	[SHAPE_S] = SQUARE_GREEN,
-	[SHAPE_T] = SQUARE_PURPLE,
-	[SHAPE_Z] = SQUARE_RED
+	[SHAPE_I] = I_PIECE_FILL,
+	[SHAPE_J] = J_PIECE_FILL,
+	[SHAPE_L] = L_PIECE_FILL,
+	[SHAPE_O] = O_PIECE_FILL,
+	[SHAPE_S] = S_PIECE_FILL,
+	[SHAPE_T] = T_PIECE_FILL,
+	[SHAPE_Z] = Z_PIECE_FILL
 };
 
 static const int cw_3x3_rot[3][3][2] = {

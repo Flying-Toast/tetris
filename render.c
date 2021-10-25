@@ -1,20 +1,26 @@
 #include <SDL2/SDL.h>
 #include "render.h"
 
+#define R_BYTE(rgb) (rgb >> 16)
+#define G_BYTE(rgb) (rgb >> 8 & 0xFF)
+#define B_BYTE(rgb) (rgb & 0xFF)
+
+#define COLOR_BYTES_ARR(rgb) {R_BYTE(rgb), G_BYTE(rgb), B_BYTE(rgb)}
+
 static const Uint8 squarecolors[][3] = {
-	[SQUARE_EMPTY] = {0, 0, 0},
-	[SQUARE_CYAN] = {2, 248, 252},
-	[SQUARE_BLUE] = {34, 51, 232},
-	[SQUARE_ORANGE] = {239, 160, 14},
-	[SQUARE_YELLOW] = {247, 235, 12},
-	[SQUARE_GREEN] = {43, 163, 32},
-	[SQUARE_RED] = {226, 50, 34},
-	[SQUARE_PURPLE] = {120, 11, 183}
+	[SQUARE_EMPTY] = COLOR_BYTES_ARR(EMPTY_SQUARE_COLOR),
+	[SQUARE_CYAN] = COLOR_BYTES_ARR(CYAN),
+	[SQUARE_BLUE] = COLOR_BYTES_ARR(BLUE),
+	[SQUARE_ORANGE] = COLOR_BYTES_ARR(ORANGE),
+	[SQUARE_YELLOW] = COLOR_BYTES_ARR(YELLOW),
+	[SQUARE_GREEN] = COLOR_BYTES_ARR(GREEN),
+	[SQUARE_RED] = COLOR_BYTES_ARR(RED),
+	[SQUARE_PURPLE] = COLOR_BYTES_ARR(PURPLE)
 };
 
-static const Uint8 gameover_bg[] = {255, 10, 12};
-static const Uint8 sidebar_bg[] = {55, 55, 55};
-static const Uint8 piecebox_bg[] = {0, 0, 0};
+static const Uint8 gameover_bg[] = COLOR_BYTES_ARR(GAMEOVER_COLOR);
+static const Uint8 sidebar_bg[] = COLOR_BYTES_ARR(SIDEBARS_BG_COLOR);
+static const Uint8 piecebox_bg[] = COLOR_BYTES_ARR(PIECEBOX_BG_COLOR);
 
 static const SDL_Rect hold_viewport = {
 	.x = 0,
