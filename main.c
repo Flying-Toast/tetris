@@ -63,6 +63,9 @@ int main(int argc, char **argv)
 			if (e.type == SDL_QUIT) {
 				clean_exit(0);
 			} else if (e.type == SDL_KEYDOWN) {
+				if (tet.gameover)
+					continue;
+
 				if (e.key.keysym.scancode == SDL_SCANCODE_LEFT)
 					tetris_move_current(&tet, XDIRECTION_LEFT);
 				if (e.key.keysym.scancode == SDL_SCANCODE_RIGHT)
@@ -78,6 +81,9 @@ int main(int argc, char **argv)
 				if (e.key.keysym.scancode == SDL_SCANCODE_C)
 					tetris_hold(&tet);
 			} else if (e.type == SDL_KEYUP) {
+				if (tet.gameover)
+					continue;
+
 				if (!kstate[SDL_SCANCODE_DOWN])
 					tet.tick_interval = DEFAULT_TICK_INTERVAL;
 			} else if (e.type == SDL_MOUSEBUTTONDOWN && tet.gameover) {
