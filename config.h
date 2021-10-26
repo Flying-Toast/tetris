@@ -27,7 +27,7 @@
 #define RED                (0xE23222)
 #define PURPLE             (0x780BB7)
 
-#define GAMEOVER_COLOR     (0x300A0A)
+#define GAMEOVER_COLOR     (0x851212)
 #define SIDEBARS_BG_COLOR  (0x373737)
 #define PIECEBOX_BG_COLOR  (0x000000)
 
