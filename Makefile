@@ -15,5 +15,5 @@ run: tetris
 
 .PHONY: clean
 clean:
-	rm *.o
-	rm tetris
+	$(RM) *.o
+	$(RM) tetris
