@@ -97,7 +97,7 @@ static void tetris_bag_next(struct tetris *t, struct tetromino *ret)
 	if (t->bag_remaining == 0) {
 		t->bag_remaining = NUM_SHAPES;
 		for (enum shape i = 0; i < NUM_SHAPES; i++) {
-			tetromino_init(&t->bag[i], i);
+			tetromino_init(t->bag + i, i);
 		}
 		for (int i = NUM_SHAPES - 1; i > 0; i--) {
 			double frac = ((double) rand()) / ((double) RAND_MAX);
@@ -156,13 +156,13 @@ static int tetris_queue_real_index(const struct tetris *t, int idx)
 
 const struct tetromino *tetris_queue_get(const struct tetris *t, int idx)
 {
-	return &t->queue[tetris_queue_real_index(t, idx)];
+	return t->queue + tetris_queue_real_index(t, idx);
 }
 
 static void tetris_spawn_piece(struct tetris *t)
 {
 	t->current_tetromino = t->queue[t->queue_start];
-	tetris_bag_next(t, &t->queue[t->queue_start]);
+	tetris_bag_next(t, t->queue + t->queue_start);
 	t->queue_start = tetris_queue_real_index(t, 1);
 	tetris_reset_current_loc(t);
 }
