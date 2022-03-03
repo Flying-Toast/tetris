@@ -92,20 +92,25 @@ static void tetromino_init(struct tetromino *tm, enum shape shape)
 	}
 }
 
+static void tetris_fill_bag(struct tetris *t)
+{
+	t->bag_remaining = NUM_SHAPES;
+	for (enum shape i = 0; i < NUM_SHAPES; i++) {
+		tetromino_init(t->bag + i, i);
+	}
+	for (int i = NUM_SHAPES - 1; i > 0; i--) {
+		double frac = ((double) rand()) / ((double) RAND_MAX);
+		int j = round(frac * ((double) i));
+		struct tetromino tmp = t->bag[j];
+		t->bag[j] = t->bag[i];
+		t->bag[i] = tmp;
+	}
+}
+
 static void tetris_bag_next(struct tetris *t, struct tetromino *ret)
 {
 	if (t->bag_remaining == 0) {
-		t->bag_remaining = NUM_SHAPES;
-		for (enum shape i = 0; i < NUM_SHAPES; i++) {
-			tetromino_init(t->bag + i, i);
-		}
-		for (int i = NUM_SHAPES - 1; i > 0; i--) {
-			double frac = ((double) rand()) / ((double) RAND_MAX);
-			int j = round(frac * ((double) i));
-			struct tetromino tmp = t->bag[j];
-			t->bag[j] = t->bag[i];
-			t->bag[i] = tmp;
-		}
+		tetris_fill_bag(t);
 	}
 
 	*ret = t->bag[--(t->bag_remaining)];
